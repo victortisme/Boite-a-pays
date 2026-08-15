@@ -332,6 +332,15 @@ let ghSha = null, syncTimer = null, ghSaving = false;
 let markRev = 0;
 
 const ghApi = () => 'https://api.github.com/repos/' + ghRepo + '/contents/' + GH_FILE;
+/* Dernière cause d'échec, pour un message d'erreur exploitable plutôt que générique. */
+let lastErr = '';
+function httpReason(code){
+  if(code === 401) return 'HTTP 401 — jeton invalide, expiré ou révoqué';
+  if(code === 403) return 'HTTP 403 — permission « Contents : Read and write » manquante';
+  if(code === 404) return 'HTTP 404 — dépôt introuvable, ou jeton non autorisé sur ' + ghRepo;
+  if(code === 409 || code === 422) return 'HTTP ' + code + ' — conflit de version';
+  return 'HTTP ' + code;
+}
 function b64enc(s){ return btoa(unescape(encodeURIComponent(s))); }
 function b64dec(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
 function setSyncStatus(t){ const el = $('syncstatus'); if(el) el.textContent = t; }
@@ -420,7 +429,7 @@ async function ghRead(){
   const headers = ghToken ? {Authorization:'Bearer '+ghToken} : {};
   const r = await fetch(ghApi() + '?ref=main&t=' + Date.now(), {cache:'no-store', headers});
   if(r.status === 404) return {marks:{}, sha:null, missing:true};
-  if(!r.ok) return null;
+  if(!r.ok){ lastErr = httpReason(r.status); return null; }
   const j = await r.json();
   return {marks: parseMarks(JSON.parse(b64dec(j.content))), sha: j.sha, missing:false};
 }
@@ -431,8 +440,9 @@ async function ghLoad(){
   let res;
   try{ res = await ghRead(); }catch(e){ res = null; }
   if(res === null){
-    setSyncStatus(ghToken ? '☁️ Connexion impossible — marquages locaux utilisés'
+    setSyncStatus(ghToken ? '☁️ Lecture impossible — ' + (lastErr || 'erreur réseau ou CORS')
                           : '☁️ Marquages locaux — configurez le jeton pour synchroniser');
+    lastErr = '';
     return;
   }
   ghSha = res.sha;
@@ -512,7 +522,7 @@ async function ghSave(isRetry){
       clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(true), 400);
       return;
     }
-    if(!r.ok) throw 0;
+    if(!r.ok){ lastErr = httpReason(r.status); throw 0; }
     const j = await r.json();
     ghSha = j.content.sha;
     if(markRev === rev){
@@ -525,7 +535,8 @@ async function ghSave(isRetry){
       clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(false), 900);
     }
   }catch(e){
-    setSyncStatus('☁️ Échec de l’enregistrement — vérifiez le jeton, le dépôt et la connexion');
+    setSyncStatus('☁️ Échec de l’enregistrement — ' + (lastErr || 'erreur réseau ou CORS'));
+    lastErr = '';
   }finally{
     ghSaving = false;
   }
