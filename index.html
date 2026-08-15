@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b2545">
+<title>Boîte à pays</title>
+<style>
+:root{
+  --bg:#0b2545; --bg2:#13315c; --card:#ffffff; --ink:#132437; --muted:#5b7089;
+  --accent:#1d6fd8; --accent2:#0fa36b; --gold:#e8a33d; --danger:#c94f4f;
+  --radius:18px;
+  --sidew:clamp(54px,13vw,92px);
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);
+  color:#fff; min-height:100dvh;
+  padding-top:var(--sat); padding-bottom:var(--sab);
+  -webkit-text-size-adjust:100%;
+}
+.screen{max-width:560px;margin:0 auto;padding:16px;display:none;}
+#home.active{display:flex;flex-direction:column;height:100dvh;overflow:hidden;padding:8px 14px calc(4px + var(--sab));width:100%;}
+.screen.active{display:block;}
+h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px;}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 2px 2px;flex:none;}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 8px;flex:none;}
+.mode-btn{
+  border:0;border-radius:12px;padding:7px 2px;text-align:center;cursor:pointer;
+  background:var(--card);color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.22);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:52px;
+}
+.mode-btn .ico{font-size:15px;}
+.mode-btn b{display:block;font-size:10.5px;line-height:1.15;}
+.mode-btn.selected{outline:3px solid var(--gold);}
+.panel{background:rgba(255,255,255,.08);border-radius:var(--radius);padding:10px;margin-bottom:8px;}
+.panel h3{margin:0 2px 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#bcd0e8;font-weight:700;}
+#catpanel{display:flex;flex-direction:column;flex:1;min-height:0;}
+#expanel{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.row{display:flex;gap:10px;flex-wrap:wrap;}
+.chip{
+  border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;
+  border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer;
+}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#132437;font-weight:700;}
+.start{
+  border:0;border-radius:999px;padding:9px 18px;font-size:14px;font-weight:800;cursor:pointer;
+  background:var(--accent2);color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.3);flex:none;
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.topbar .back{background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:999px;padding:9px 15px;font-size:14px;cursor:pointer;}
+.counter{font-size:14px;color:#bcd0e8;font-variant-numeric:tabular-nums;}
+.card{
+  background:var(--card);color:var(--ink);border-radius:22px;padding:20px 16px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);min-height:52dvh;
+  display:flex;flex-direction:column;
+}
+.word{font-size:clamp(26px,7.5vw,38px);font-weight:800;text-align:center;margin:2px 0 4px;line-height:1.15;}
+.flag{font-size:34px;text-align:center;margin-bottom:6px;line-height:1;}
+.meanings{display:grid;gap:12px;flex:1;align-content:start;}
+.fact{
+  color:#fff;background:var(--accent);padding:11px 14px;border-radius:14px;text-align:center;
+  box-shadow:0 3px 10px rgba(29,111,216,.3);cursor:default;
+}
+.fact .lab{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;font-weight:700;display:block;margin-bottom:4px;}
+.fact .val{font-size:19px;font-weight:800;line-height:1.25;}
+.fact.hidden{
+  background:repeating-linear-gradient(45deg,#13315c,#13315c 12px,#1b3f74 12px,#1b3f74 24px);
+  cursor:pointer;
+}
+.fact.hidden .val{color:#bcd0e8;font-weight:700;}
+.note{font-size:12.5px;line-height:1.45;color:var(--muted);border-top:1px solid #e3e9f2;padding-top:8px;margin-top:auto;}
+.controls{display:flex;gap:10px;margin-top:14px;}
+.ctrl{flex:1;border:0;border-radius:16px;padding:16px 8px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;}
+.prev{background:rgba(255,255,255,.16);}
+.next{background:var(--accent);}
+.reveal{background:var(--gold);color:#132437;flex:1.4;}
+.reveal[disabled]{opacity:.35;}
+.ctrl:active{transform:scale(.97);}
+.foot{text-align:center;color:#8aa0b8;font-size:9.5px;margin-top:4px;padding-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none;}
+.selcount{font-size:12px;color:#e8a33d;margin:4px 4px 0;flex:none;}
+.catgrid{display:grid;grid-template-columns:1fr;gap:6px;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px;align-content:start;}
+.catitem{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;font-size:14.5px;cursor:pointer;}
+.catitem input{width:19px;height:19px;accent-color:var(--gold);}
+.catitem .cnt{margin-left:auto;color:#bcd0e8;font-size:12px;font-variant-numeric:tabular-nums;}
+.smallrow{display:flex;gap:6px;margin-bottom:10px;flex-wrap:nowrap;align-items:center;}
+.randpick{display:flex;gap:6px;align-items:center;margin-left:auto;background:rgba(232,163,61,.18);border:1px solid rgba(232,163,61,.35);border-radius:999px;padding:4px 5px;}
+.randpick input{width:44px;font-size:14px;text-align:center;padding:5px 2px;border-radius:999px;border:0;background:var(--card);color:var(--ink);}
+.smallbtn{border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:7px 9px;font-size:11.5px;cursor:pointer;white-space:nowrap;}
+.smallbtn.gold{background:var(--gold);color:#132437;font-weight:700;}
+.exsearch{width:100%;font-size:18px;padding:14px 16px;border-radius:14px;border:0;background:var(--card);color:var(--ink);margin-bottom:10px;-webkit-appearance:none;appearance:none;}
+.exsug{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.exsug button{border:0;border-radius:999px;padding:9px 14px;font-size:15px;font-weight:600;background:rgba(255,255,255,.18);color:#fff;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.45);}
+.exsug .exnone{color:#bcd0e8;font-size:14px;}
+.excard{min-height:0;}
+.diffseg{display:inline-flex;background:#e8edf4;border-radius:999px;padding:3px;gap:3px;}
+.diffseg button{border:0;border-radius:999px;padding:6px 11px;font-size:12.5px;cursor:pointer;background:transparent;color:#5b7089;font-weight:700;}
+.diffseg button.on[data-s="ND"]{background:#c6d0dd;color:#132437;}
+.diffseg button.on[data-s="acquis"]{background:var(--accent2);color:#fff;}
+.diffseg button.on[data-s="revoir"]{background:var(--gold);color:#132437;}
+.diffrow{text-align:center;margin:0 0 10px;}
+.qopts{display:grid;gap:9px;margin-top:6px;}
+.qopt{
+  border:0;border-radius:14px;padding:14px 12px;font-size:16px;font-weight:700;cursor:pointer;
+  background:#eef2f8;color:var(--ink);text-align:left;line-height:1.3;
+}
+.qopt.good{background:var(--accent2);color:#fff;}
+.qopt.bad{background:var(--danger);color:#fff;}
+.qopt[disabled]{cursor:default;}
+.qask{font-size:15px;color:var(--muted);text-align:center;margin:0 0 10px;font-weight:700;}
+.score{font-size:14px;color:#bcd0e8;font-variant-numeric:tabular-nums;}
+
+/* ---------- boutons latéraux de classement ---------- */
+.sidebtn{
+  position:fixed;top:0;bottom:0;width:var(--sidew);border:0;z-index:40;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  color:#fff;font-weight:800;font-size:12.5px;line-height:1.2;text-align:center;
+  padding:8px 4px;cursor:pointer;transition:background .12s;
+  padding-top:calc(8px + var(--sat));padding-bottom:calc(8px + var(--sab));
+}
+body.playing .sidebtn{display:flex;}
+.sidebtn.left{left:0;background:linear-gradient(90deg,rgba(232,163,61,.34),rgba(232,163,61,.07));}
+.sidebtn.right{right:0;background:linear-gradient(270deg,rgba(15,163,107,.34),rgba(15,163,107,.07));}
+.sidebtn .ico{font-size:23px;}
+.sidebtn .key{font-size:10px;font-weight:700;opacity:.8;border:1px solid rgba(255,255,255,.42);border-radius:6px;padding:1px 7px;}
+.sidebtn.left.on{background:var(--gold);color:#132437;}
+.sidebtn.right.on{background:var(--accent2);color:#fff;}
+.sidebtn.left.on .key,.sidebtn.right.on .key{border-color:rgba(0,0,0,.3);}
+.sidebtn:active{filter:brightness(1.3);}
+@media (max-width:759px){
+  #play.active{padding-left:calc(6px + var(--sidew));padding-right:calc(6px + var(--sidew));}
+}
+
+/* ---------- synchronisation ---------- */
+#syncpanel{display:flex;align-items:center;flex-wrap:nowrap;gap:8px;padding:7px 10px;flex:none;margin-bottom:8px;}
+#syncpanel .selcount{margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#bcd0e8;}
+.dlgback{position:fixed;inset:0;background:rgba(4,12,25,.74);z-index:90;display:flex;align-items:center;justify-content:center;padding:18px;}
+.dlg{background:var(--bg2);border-radius:18px;padding:16px;max-width:430px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.5);max-height:88dvh;overflow-y:auto;}
+.dlg h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#bcd0e8;font-weight:700;}
+.dlglab{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:#9db2cd;margin:12px 0 4px;font-weight:700;}
+.tokfield{width:100%;font-size:13px;padding:10px;border-radius:10px;border:0;background:#fff;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical;}
+.dlgrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.dlghelp{font-size:11.5px;line-height:1.55;color:#9db2cd;margin:12px 0 0;}
+</style>
+</head>
+<body>
+
+<!-- ACCUEIL -->
+<div class="screen active" id="home">
+  <div class="titlerow">
+    <h1>🌍 Boîte à pays</h1>
+    <button class="start" id="startBtn" onclick="startSession()">Commencer ➜</button>
+  </div>
+
+  <div class="modes">
+    <button class="mode-btn selected" id="mode1btn" onclick="setMode(1)">
+      <span class="ico">🗂️</span><b>Présentation</b>
+    </button>
+    <button class="mode-btn" id="mode2btn" onclick="setMode(2)">
+      <span class="ico">🙈</span><b>Révélation</b>
+    </button>
+    <button class="mode-btn" id="mode3btn" onclick="setMode(3)">
+      <span class="ico">🎯</span><b>Quiz</b>
+    </button>
+    <button class="mode-btn" id="mode4btn" onclick="setMode(4)">
+      <span class="ico">🔍</span><b>Explorer</b>
+    </button>
+  </div>
+
+  <div class="panel" id="syncpanel">
+    <div class="selcount" id="syncstatus">☁️ Chargement…</div>
+    <button class="smallbtn" onclick="toggleSyncSetup()">Configurer</button>
+  </div>
+
+  <div class="panel" id="poolpanel">
+    <h3>Pays utilisés</h3>
+    <div class="row">
+      <button class="chip on" data-p="tous" onclick="setPool('tous')">Tous</button>
+      <button class="chip" data-p="revoir" onclick="setPool('revoir')">🔥 À revoir</button>
+      <button class="chip" data-p="acquis" onclick="setPool('acquis')">✅ Acquis</button>
+      <button class="chip" data-p="ND" onclick="setPool('ND')">ND</button>
+    </div>
+  </div>
+
+  <div class="panel" id="quizpanel" style="display:none">
+    <h3>Questions posées</h3>
+    <div class="row">
+      <button class="chip on" data-q="cap" onclick="toggleField('cap')">Capitale</button>
+      <button class="chip on" data-q="big" onclick="toggleField('big')">Plus grande ville</button>
+      <button class="chip on" data-q="cur" onclick="toggleField('cur')">Monnaie</button>
+    </div>
+  </div>
+
+  <div class="panel" id="catpanel">
+    <h3>Continents</h3>
+    <div class="smallrow">
+      <button class="smallbtn" onclick="allCats(true)">Tout cocher</button>
+      <button class="smallbtn" onclick="allCats(false)">Tout décocher</button>
+      <span class="randpick">
+        <button class="smallbtn gold" onclick="randomPick()">🎲 au hasard</button>
+        <input type="number" id="nbRand" min="1" max="195" value="20" inputmode="numeric">
+      </span>
+    </div>
+    <div class="catgrid" id="catgrid"></div>
+    <div class="selcount" id="selcount"></div>
+  </div>
+
+  <div id="expanel" style="display:none">
+    <input class="exsearch" id="exInput" type="search" placeholder="Tapez un pays, une ville, une monnaie…" autocomplete="off" autocapitalize="off" spellcheck="false" oninput="exSearch()">
+    <div class="exsug" id="exSug"></div>
+    <div class="card excard" id="exCard" style="display:none"></div>
+  </div>
+
+  <p class="foot" id="homefoot">195 pays — 193 membres de l’ONU + Vatican et Palestine</p>
+</div>
+
+<!-- CONFIGURATION DU JETON -->
+<div id="syncsetup" class="dlgback" style="display:none" onclick="if(event.target===this)toggleSyncSetup()">
+  <div class="dlg">
+    <h3>Jeton GitHub — synchronisation</h3>
+    <p class="dlglab">Dépôt (propriétaire/nom)</p>
+    <input id="ghrepo" class="tokfield" type="text" placeholder="victortisme/Boite-a-pays"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <p class="dlglab">Jeton d’accès personnel</p>
+    <textarea id="ghtoken" class="tokfield" rows="3" placeholder="Collez ici le jeton (github_pat_…)"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    <div class="dlgrow">
+      <button class="smallbtn" onclick="pasteToken()">📋 Coller</button>
+      <button class="smallbtn" onclick="$('ghtoken').value=''">Effacer</button>
+      <button class="smallbtn gold" onclick="saveGhToken()">Enregistrer</button>
+      <button class="smallbtn" onclick="toggleSyncSetup()">Fermer</button>
+    </div>
+    <p class="dlghelp">
+      GitHub ▸ Settings ▸ Developer settings ▸ Personal access tokens ▸ Fine-grained tokens ▸ Generate new token.
+      Repository access : « Only select repositories » ▸ le dépôt indiqué ci-dessus. Permissions ▸ Contents : Read and write.
+      Les marquages sont écrits dans <b>pays-marques.json</b>, à la racine du dépôt ; le fichier est créé automatiquement
+      au premier enregistrement. Le jeton reste uniquement sur cet appareil.
+    </p>
+  </div>
+</div>
+
+<!-- FICHE -->
+<div class="screen" id="play">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← Menu</button>
+    <span class="counter" id="counter"></span>
+    <button class="back" onclick="shuffleNow()" title="Mélanger">🎲</button>
+  </div>
+  <div class="card" id="playcard"></div>
+  <div class="controls">
+    <button class="ctrl prev" onclick="nav(-1)">◀ Préc.</button>
+    <button class="ctrl reveal" id="revealBtn" onclick="revealOrNext()">👁 Révéler</button>
+    <button class="ctrl next" id="nextBtn" onclick="nav(1)">Suiv. ▶</button>
+  </div>
+  <p class="foot">Cliquez l’écran ou → / ↓ pour révéler · Q à revoir · D acquis</p>
+</div>
+
+<!-- BOUTONS LATÉRAUX DE CLASSEMENT -->
+<button class="sidebtn left" id="sideRevoir" type="button" onclick="markCurrent('revoir')" title="Marquer à revoir (Q)">
+  <span class="ico">🔥</span><span class="txt">à revoir</span><span class="key">Q</span>
+</button>
+<button class="sidebtn right" id="sideAcquis" type="button" onclick="markCurrent('acquis')" title="Marquer acquis (D)">
+  <span class="ico">✅</span><span class="txt">acquis</span><span class="key">D</span>
+</button>
+
+<!-- QUIZ -->
+<div class="screen" id="quiz">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← Menu</button>
+    <span class="counter" id="qcounter"></span>
+    <span class="score" id="qscore"></span>
+  </div>
+  <div class="card" id="quizcard"></div>
+  <div class="controls">
+    <button class="ctrl next" id="qnext" onclick="quizNext()" style="flex:1">Question suivante ▶</button>
+  </div>
+  <p class="foot">Une bonne réponse marque le pays comme acquis, une erreur le place à revoir</p>
+</div>
+<script>
+const DATA = [{"n": "Afghanistan", "f": "🇦🇫", "cap": "Kaboul", "big": "Kaboul", "cur": "afghani (AFN)", "note": "", "c": "Asie"}, {"n": "Afrique du Sud", "f": "🇿🇦", "cap": "Pretoria (exécutif), Le Cap (législatif), Bloemfontein (judiciaire)", "big": "Johannesburg", "cur": "rand (ZAR)", "note": "Seul pays à avoir trois capitales.", "c": "Afrique"}, {"n": "Albanie", "f": "🇦🇱", "cap": "Tirana", "big": "Tirana", "cur": "lek (ALL)", "note": "", "c": "Europe"}, {"n": "Algérie", "f": "🇩🇿", "cap": "Alger", "big": "Alger", "cur": "dinar algérien (DZD)", "note": "", "c": "Afrique"}, {"n": "Allemagne", "f": "🇩🇪", "cap": "Berlin", "big": "Berlin", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Andorre", "f": "🇦🇩", "cap": "Andorre-la-Vieille", "big": "Andorre-la-Vieille", "cur": "euro (EUR)", "note": "L'Andorre utilise l'euro sans appartenir à l'UE.", "c": "Europe"}, {"n": "Angola", "f": "🇦🇴", "cap": "Luanda", "big": "Luanda", "cur": "kwanza (AOA)", "note": "", "c": "Afrique"}, {"n": "Antigua-et-Barbuda", "f": "🇦🇬", "cap": "Saint John's", "big": "Saint John's", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Arabie Saoudite", "f": "🇸🇦", "cap": "Riyad", "big": "Riyad", "cur": "riyal saoudien (SAR)", "note": "", "c": "Asie"}, {"n": "Argentine", "f": "🇦🇷", "cap": "Buenos Aires", "big": "Buenos Aires", "cur": "peso argentin (ARS)", "note": "", "c": "Amérique du Sud"}, {"n": "Arménie", "f": "🇦🇲", "cap": "Erevan", "big": "Erevan", "cur": "dram (AMD)", "note": "", "c": "Asie"}, {"n": "Australie", "f": "🇦🇺", "cap": "Canberra", "big": "Sydney", "cur": "dollar australien (AUD)", "note": "Sydney et Melbourne sont au coude à coude : selon le découpage retenu par l'office statistique australien, Melbourne est passée en tête certaines années.", "c": "Océanie"}, {"n": "Autriche", "f": "🇦🇹", "cap": "Vienne", "big": "Vienne", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Azerbaïdjan", "f": "🇦🇿", "cap": "Bakou", "big": "Bakou", "cur": "manat azerbaïdjanais (AZN)", "note": "", "c": "Asie"}, {"n": "Bahamas", "f": "🇧🇸", "cap": "Nassau", "big": "Nassau", "cur": "dollar bahaméen (BSD)", "note": "Le dollar américain circule à parité.", "c": "Amérique centrale et Caraïbes"}, {"n": "Bahreïn", "f": "🇧🇭", "cap": "Manama", "big": "Manama", "cur": "dinar bahreïni (BHD)", "note": "", "c": "Asie"}, {"n": "Bangladesh", "f": "🇧🇩", "cap": "Dacca", "big": "Dacca", "cur": "taka (BDT)", "note": "", "c": "Asie"}, {"n": "Barbade", "f": "🇧🇧", "cap": "Bridgetown", "big": "Bridgetown", "cur": "dollar barbadien (BBD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Belgique", "f": "🇧🇪", "cap": "Bruxelles", "big": "Bruxelles", "cur": "euro (EUR)", "note": "Anvers est la plus grande commune ; l'agglomération bruxelloise reste la plus peuplée.", "c": "Europe"}, {"n": "Belize", "f": "🇧🇿", "cap": "Belmopan", "big": "Belize City", "cur": "dollar bélizien (BZD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Bénin", "f": "🇧🇯", "cap": "Porto-Novo", "big": "Cotonou", "cur": "franc CFA (XOF)", "note": "Cotonou est le siège du gouvernement.", "c": "Afrique"}, {"n": "Bhoutan", "f": "🇧🇹", "cap": "Thimphou", "big": "Thimphou", "cur": "ngultrum (BTN)", "note": "La roupie indienne circule à parité.", "c": "Asie"}, {"n": "Biélorussie", "f": "🇧🇾", "cap": "Minsk", "big": "Minsk", "cur": "rouble biélorusse (BYN)", "note": "", "c": "Europe"}, {"n": "Birmanie (Myanmar)", "f": "🇲🇲", "cap": "Naypyidaw", "big": "Rangoun (Yangon)", "cur": "kyat (MMK)", "note": "Capitale transférée de Rangoun à Naypyidaw en 2005.", "c": "Asie"}, {"n": "Bolivie", "f": "🇧🇴", "cap": "Sucre (constitutionnelle), La Paz (siège du gouvernement)", "big": "Santa Cruz de la Sierra", "cur": "boliviano (BOB)", "note": "", "c": "Amérique du Sud"}, {"n": "Bosnie-Herzégovine", "f": "🇧🇦", "cap": "Sarajevo", "big": "Sarajevo", "cur": "mark convertible (BAM)", "note": "", "c": "Europe"}, {"n": "Botswana", "f": "🇧🇼", "cap": "Gaborone", "big": "Gaborone", "cur": "pula (BWP)", "note": "", "c": "Afrique"}, {"n": "Brésil", "f": "🇧🇷", "cap": "Brasilia", "big": "São Paulo", "cur": "réal (BRL)", "note": "Capitale transférée de Rio de Janeiro à Brasilia en 1960.", "c": "Amérique du Sud"}, {"n": "Brunei", "f": "🇧🇳", "cap": "Bandar Seri Begawan", "big": "Bandar Seri Begawan", "cur": "dollar de Brunei (BND)", "note": "Le dollar de Singapour est accepté à parité.", "c": "Asie"}, {"n": "Bulgarie", "f": "🇧🇬", "cap": "Sofia", "big": "Sofia", "cur": "euro (EUR)", "note": "La Bulgarie a adopté l'euro le 1er janvier 2026, en remplacement du lev.", "c": "Europe"}, {"n": "Burkina Faso", "f": "🇧🇫", "cap": "Ouagadougou", "big": "Ouagadougou", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Burundi", "f": "🇧🇮", "cap": "Gitega", "big": "Bujumbura", "cur": "franc burundais (BIF)", "note": "Capitale politique transférée à Gitega en 2019.", "c": "Afrique"}, {"n": "Cambodge", "f": "🇰🇭", "cap": "Phnom Penh", "big": "Phnom Penh", "cur": "riel (KHR)", "note": "Le dollar américain est largement utilisé.", "c": "Asie"}, {"n": "Cameroun", "f": "🇨🇲", "cap": "Yaoundé", "big": "Douala", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Canada", "f": "🇨🇦", "cap": "Ottawa", "big": "Toronto", "cur": "dollar canadien (CAD)", "note": "", "c": "Amérique du Nord"}, {"n": "Cap-Vert", "f": "🇨🇻", "cap": "Praia", "big": "Praia", "cur": "escudo cap-verdien (CVE)", "note": "", "c": "Afrique"}, {"n": "Chili", "f": "🇨🇱", "cap": "Santiago", "big": "Santiago", "cur": "peso chilien (CLP)", "note": "Valparaíso accueille le Congrès.", "c": "Amérique du Sud"}, {"n": "Chine", "f": "🇨🇳", "cap": "Pékin", "big": "Shanghai", "cur": "yuan renminbi (CNY)", "note": "", "c": "Asie"}, {"n": "Chypre", "f": "🇨🇾", "cap": "Nicosie", "big": "Nicosie", "cur": "euro (EUR)", "note": "Dernière capitale divisée du monde.", "c": "Europe"}, {"n": "Colombie", "f": "🇨🇴", "cap": "Bogota", "big": "Bogota", "cur": "peso colombien (COP)", "note": "", "c": "Amérique du Sud"}, {"n": "Comores", "f": "🇰🇲", "cap": "Moroni", "big": "Moroni", "cur": "franc comorien (KMF)", "note": "", "c": "Afrique"}, {"n": "Corée du Nord", "f": "🇰🇵", "cap": "Pyongyang", "big": "Pyongyang", "cur": "won nord-coréen (KPW)", "note": "", "c": "Asie"}, {"n": "Corée du Sud", "f": "🇰🇷", "cap": "Séoul", "big": "Séoul", "cur": "won sud-coréen (KRW)", "note": "Sejong est la capitale administrative de fait.", "c": "Asie"}, {"n": "Costa Rica", "f": "🇨🇷", "cap": "San José", "big": "San José", "cur": "colón (CRC)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Côte d'Ivoire", "f": "🇨🇮", "cap": "Yamoussoukro", "big": "Abidjan", "cur": "franc CFA (XOF)", "note": "Abidjan reste le siège du gouvernement.", "c": "Afrique"}, {"n": "Croatie", "f": "🇭🇷", "cap": "Zagreb", "big": "Zagreb", "cur": "euro (EUR)", "note": "La Croatie a adopté l'euro en 2023.", "c": "Europe"}, {"n": "Cuba", "f": "🇨🇺", "cap": "La Havane", "big": "La Havane", "cur": "peso cubain (CUP)", "note": "Le peso convertible (CUC) a été supprimé en 2021.", "c": "Amérique centrale et Caraïbes"}, {"n": "Danemark", "f": "🇩🇰", "cap": "Copenhague", "big": "Copenhague", "cur": "couronne danoise (DKK)", "note": "", "c": "Europe"}, {"n": "Djibouti", "f": "🇩🇯", "cap": "Djibouti", "big": "Djibouti", "cur": "franc de Djibouti (DJF)", "note": "", "c": "Afrique"}, {"n": "Dominique", "f": "🇩🇲", "cap": "Roseau", "big": "Roseau", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Égypte", "f": "🇪🇬", "cap": "Le Caire", "big": "Le Caire", "cur": "livre égyptienne (EGP)", "note": "Une nouvelle capitale administrative est en construction à l’est du Caire.", "c": "Afrique"}, {"n": "Émirats arabes unis", "f": "🇦🇪", "cap": "Abou Dabi", "big": "Dubaï", "cur": "dirham des Émirats (AED)", "note": "", "c": "Asie"}, {"n": "Équateur", "f": "🇪🇨", "cap": "Quito", "big": "Guayaquil", "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2000 ; Quito et Guayaquil sont très proches en population.", "c": "Amérique du Sud"}, {"n": "Érythrée", "f": "🇪🇷", "cap": "Asmara", "big": "Asmara", "cur": "nakfa (ERN)", "note": "", "c": "Afrique"}, {"n": "Espagne", "f": "🇪🇸", "cap": "Madrid", "big": "Madrid", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Estonie", "f": "🇪🇪", "cap": "Tallinn", "big": "Tallinn", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Eswatini", "f": "🇸🇿", "cap": "Mbabane (administrative), Lobamba (royale et législative)", "big": "Manzini", "cur": "lilangeni (SZL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "États-Unis", "f": "🇺🇸", "cap": "Washington", "big": "New York", "cur": "dollar américain (USD)", "note": "", "c": "Amérique du Nord"}, {"n": "Éthiopie", "f": "🇪🇹", "cap": "Addis-Abeba", "big": "Addis-Abeba", "cur": "birr (ETB)", "note": "Siège de l’Union africaine.", "c": "Afrique"}, {"n": "Fidji", "f": "🇫🇯", "cap": "Suva", "big": "Suva", "cur": "dollar fidjien (FJD)", "note": "", "c": "Océanie"}, {"n": "Finlande", "f": "🇫🇮", "cap": "Helsinki", "big": "Helsinki", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "France", "f": "🇫🇷", "cap": "Paris", "big": "Paris", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Gabon", "f": "🇬🇦", "cap": "Libreville", "big": "Libreville", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Gambie", "f": "🇬🇲", "cap": "Banjul", "big": "Serekunda", "cur": "dalasi (GMD)", "note": "Serekunda dépasse largement Banjul en population.", "c": "Afrique"}, {"n": "Géorgie", "f": "🇬🇪", "cap": "Tbilissi", "big": "Tbilissi", "cur": "lari (GEL)", "note": "", "c": "Asie"}, {"n": "Ghana", "f": "🇬🇭", "cap": "Accra", "big": "Accra", "cur": "cedi (GHS)", "note": "", "c": "Afrique"}, {"n": "Grèce", "f": "🇬🇷", "cap": "Athènes", "big": "Athènes", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Grenade", "f": "🇬🇩", "cap": "Saint-Georges", "big": "Saint-Georges", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guatemala", "f": "🇬🇹", "cap": "Guatemala", "big": "Guatemala", "cur": "quetzal (GTQ)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guinée", "f": "🇬🇳", "cap": "Conakry", "big": "Conakry", "cur": "franc guinéen (GNF)", "note": "", "c": "Afrique"}, {"n": "Guinée équatoriale", "f": "🇬🇶", "cap": "Malabo", "big": "Bata", "cur": "franc CFA (XAF)", "note": "Une nouvelle capitale, Ciudad de la Paz (Oyala), est en construction.", "c": "Afrique"}, {"n": "Guinée-Bissau", "f": "🇬🇼", "cap": "Bissau", "big": "Bissau", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Guyana", "f": "🇬🇾", "cap": "Georgetown", "big": "Georgetown", "cur": "dollar guyanien (GYD)", "note": "", "c": "Amérique du Sud"}, {"n": "Haïti", "f": "🇭🇹", "cap": "Port-au-Prince", "big": "Port-au-Prince", "cur": "gourde (HTG)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Honduras", "f": "🇭🇳", "cap": "Tegucigalpa", "big": "Tegucigalpa", "cur": "lempira (HNL)", "note": "San Pedro Sula est la capitale économique.", "c": "Amérique centrale et Caraïbes"}, {"n": "Hongrie", "f": "🇭🇺", "cap": "Budapest", "big": "Budapest", "cur": "forint (HUF)", "note": "", "c": "Europe"}, {"n": "Îles Marshall", "f": "🇲🇭", "cap": "Majuro", "big": "Majuro", "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Îles Salomon", "f": "🇸🇧", "cap": "Honiara", "big": "Honiara", "cur": "dollar des Salomon (SBD)", "note": "", "c": "Océanie"}, {"n": "Inde", "f": "🇮🇳", "cap": "New Delhi", "big": "Delhi", "cur": "roupie indienne (INR)", "note": "New Delhi est un district de l'agglomération de Delhi. Mumbai est la plus grande ville au sens municipal, Delhi la plus grande agglomération.", "c": "Asie"}, {"n": "Indonésie", "f": "🇮🇩", "cap": "Jakarta", "big": "Jakarta", "cur": "roupie indonésienne (IDR)", "note": "Nusantara doit devenir la capitale politique ; en 2026, Jakarta conserve le statut de capitale.", "c": "Asie"}, {"n": "Irak", "f": "🇮🇶", "cap": "Bagdad", "big": "Bagdad", "cur": "dinar irakien (IQD)", "note": "", "c": "Asie"}, {"n": "Iran", "f": "🇮🇷", "cap": "Téhéran", "big": "Téhéran", "cur": "rial iranien (IRR)", "note": "", "c": "Asie"}, {"n": "Irlande", "f": "🇮🇪", "cap": "Dublin", "big": "Dublin", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Islande", "f": "🇮🇸", "cap": "Reykjavik", "big": "Reykjavik", "cur": "couronne islandaise (ISK)", "note": "", "c": "Europe"}, {"n": "Israël", "f": "🇮🇱", "cap": "Jérusalem", "big": "Tel Aviv-Jaffa", "cur": "nouveau shekel (ILS)", "note": "Statut de Jérusalem contesté ; la plupart des ambassades sont à Tel Aviv. Jérusalem est la plus grande commune, l'agglomération de Tel Aviv (Gush Dan) la plus peuplée.", "c": "Asie"}, {"n": "Italie", "f": "🇮🇹", "cap": "Rome", "big": "Rome", "cur": "euro (EUR)", "note": "Selon la définition d'agglomération retenue, Milan peut dépasser Rome.", "c": "Europe"}, {"n": "Jamaïque", "f": "🇯🇲", "cap": "Kingston", "big": "Kingston", "cur": "dollar jamaïcain (JMD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Japon", "f": "🇯🇵", "cap": "Tokyo", "big": "Tokyo", "cur": "yen (JPY)", "note": "Plus grande agglomération du monde.", "c": "Asie"}, {"n": "Jordanie", "f": "🇯🇴", "cap": "Amman", "big": "Amman", "cur": "dinar jordanien (JOD)", "note": "", "c": "Asie"}, {"n": "Kazakhstan", "f": "🇰🇿", "cap": "Astana", "big": "Almaty", "cur": "tenge (KZT)", "note": "Capitale transférée d’Almaty à Astana en 1997.", "c": "Asie"}, {"n": "Kenya", "f": "🇰🇪", "cap": "Nairobi", "big": "Nairobi", "cur": "shilling kényan (KES)", "note": "", "c": "Afrique"}, {"n": "Kirghizistan", "f": "🇰🇬", "cap": "Bichkek", "big": "Bichkek", "cur": "som (KGS)", "note": "", "c": "Asie"}, {"n": "Kiribati", "f": "🇰🇮", "cap": "Tarawa-Sud", "big": "Tarawa-Sud", "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Koweït", "f": "🇰🇼", "cap": "Koweït", "big": "Koweït", "cur": "dinar koweïtien (KWD)", "note": "La monnaie ayant la plus forte valeur faciale du monde.", "c": "Asie"}, {"n": "Laos", "f": "🇱🇦", "cap": "Vientiane", "big": "Vientiane", "cur": "kip (LAK)", "note": "", "c": "Asie"}, {"n": "Lesotho", "f": "🇱🇸", "cap": "Maseru", "big": "Maseru", "cur": "loti (LSL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Lettonie", "f": "🇱🇻", "cap": "Riga", "big": "Riga", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Liban", "f": "🇱🇧", "cap": "Beyrouth", "big": "Beyrouth", "cur": "livre libanaise (LBP)", "note": "", "c": "Asie"}, {"n": "Liberia", "f": "🇱🇷", "cap": "Monrovia", "big": "Monrovia", "cur": "dollar libérien (LRD)", "note": "", "c": "Afrique"}, {"n": "Libye", "f": "🇱🇾", "cap": "Tripoli", "big": "Tripoli", "cur": "dinar libyen (LYD)", "note": "", "c": "Afrique"}, {"n": "Liechtenstein", "f": "🇱🇮", "cap": "Vaduz", "big": "Schaan", "cur": "franc suisse (CHF)", "note": "", "c": "Europe"}, {"n": "Lituanie", "f": "🇱🇹", "cap": "Vilnius", "big": "Vilnius", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Luxembourg", "f": "🇱🇺", "cap": "Luxembourg", "big": "Luxembourg", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Macédoine du Nord", "f": "🇲🇰", "cap": "Skopje", "big": "Skopje", "cur": "denar (MKD)", "note": "", "c": "Europe"}, {"n": "Madagascar", "f": "🇲🇬", "cap": "Antananarivo", "big": "Antananarivo", "cur": "ariary (MGA)", "note": "", "c": "Afrique"}, {"n": "Malaisie", "f": "🇲🇾", "cap": "Kuala Lumpur", "big": "Kuala Lumpur", "cur": "ringgit (MYR)", "note": "Putrajaya est la capitale administrative.", "c": "Asie"}, {"n": "Malawi", "f": "🇲🇼", "cap": "Lilongwe", "big": "Lilongwe", "cur": "kwacha malawien (MWK)", "note": "Blantyre est la capitale économique.", "c": "Afrique"}, {"n": "Maldives", "f": "🇲🇻", "cap": "Malé", "big": "Malé", "cur": "rufiyaa (MVR)", "note": "", "c": "Asie"}, {"n": "Mali", "f": "🇲🇱", "cap": "Bamako", "big": "Bamako", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Malte", "f": "🇲🇹", "cap": "La Valette", "big": "La Valette", "cur": "euro (EUR)", "note": "La Valette ne compte que quelques milliers d’habitants ; Birkirkara est la plus grande commune.", "c": "Europe"}, {"n": "Maroc", "f": "🇲🇦", "cap": "Rabat", "big": "Casablanca", "cur": "dirham marocain (MAD)", "note": "", "c": "Afrique"}, {"n": "Maurice", "f": "🇲🇺", "cap": "Port-Louis", "big": "Port-Louis", "cur": "roupie mauricienne (MUR)", "note": "", "c": "Afrique"}, {"n": "Mauritanie", "f": "🇲🇷", "cap": "Nouakchott", "big": "Nouakchott", "cur": "ouguiya (MRU)", "note": "", "c": "Afrique"}, {"n": "Mexique", "f": "🇲🇽", "cap": "Mexico", "big": "Mexico", "cur": "peso mexicain (MXN)", "note": "", "c": "Amérique du Nord"}, {"n": "Micronésie", "f": "🇫🇲", "cap": "Palikir", "big": "Weno", "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Moldavie", "f": "🇲🇩", "cap": "Chisinau", "big": "Chisinau", "cur": "leu moldave (MDL)", "note": "", "c": "Europe"}, {"n": "Monaco", "f": "🇲🇨", "cap": "Monaco", "big": "Monaco", "cur": "euro (EUR)", "note": "Cité-État ; Monte-Carlo est un quartier, pas la capitale.", "c": "Europe"}, {"n": "Mongolie", "f": "🇲🇳", "cap": "Oulan-Bator", "big": "Oulan-Bator", "cur": "tugrik (MNT)", "note": "Capitale la plus froide du monde.", "c": "Asie"}, {"n": "Monténégro", "f": "🇲🇪", "cap": "Podgorica", "big": "Podgorica", "cur": "euro (EUR)", "note": "Le Monténégro utilise l'euro unilatéralement.", "c": "Europe"}, {"n": "Mozambique", "f": "🇲🇿", "cap": "Maputo", "big": "Maputo", "cur": "metical (MZN)", "note": "Matola, dans l’agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Namibie", "f": "🇳🇦", "cap": "Windhoek", "big": "Windhoek", "cur": "dollar namibien (NAD)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Nauru", "f": "🇳🇷", "cap": "Yaren (de facto)", "big": "Yaren", "cur": "dollar australien (AUD)", "note": "Nauru n’a pas de capitale officielle.", "c": "Océanie"}, {"n": "Népal", "f": "🇳🇵", "cap": "Katmandou", "big": "Katmandou", "cur": "roupie népalaise (NPR)", "note": "", "c": "Asie"}, {"n": "Nicaragua", "f": "🇳🇮", "cap": "Managua", "big": "Managua", "cur": "córdoba (NIO)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Niger", "f": "🇳🇪", "cap": "Niamey", "big": "Niamey", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Nigéria", "f": "🇳🇬", "cap": "Abuja", "big": "Lagos", "cur": "naira (NGN)", "note": "Capitale transférée de Lagos à Abuja en 1991.", "c": "Afrique"}, {"n": "Norvège", "f": "🇳🇴", "cap": "Oslo", "big": "Oslo", "cur": "couronne norvégienne (NOK)", "note": "", "c": "Europe"}, {"n": "Nouvelle-Zélande", "f": "🇳🇿", "cap": "Wellington", "big": "Auckland", "cur": "dollar néo-zélandais (NZD)", "note": "", "c": "Océanie"}, {"n": "Oman", "f": "🇴🇲", "cap": "Mascate", "big": "Mascate", "cur": "rial omanais (OMR)", "note": "", "c": "Asie"}, {"n": "Ouganda", "f": "🇺🇬", "cap": "Kampala", "big": "Kampala", "cur": "shilling ougandais (UGX)", "note": "", "c": "Afrique"}, {"n": "Ouzbékistan", "f": "🇺🇿", "cap": "Tachkent", "big": "Tachkent", "cur": "sum (UZS)", "note": "", "c": "Asie"}, {"n": "Pakistan", "f": "🇵🇰", "cap": "Islamabad", "big": "Karachi", "cur": "roupie pakistanaise (PKR)", "note": "Capitale transférée de Karachi à Islamabad en 1967.", "c": "Asie"}, {"n": "Palaos", "f": "🇵🇼", "cap": "Ngerulmud", "big": "Koror", "cur": "dollar américain (USD)", "note": "Ngerulmud est la plus petite capitale du monde par la population.", "c": "Océanie"}, {"n": "Palestine", "f": "🇵🇸", "cap": "Jérusalem-Est (revendiquée), Ramallah (siège de l’Autorité)", "big": "Gaza", "cur": "nouveau shekel (ILS), dinar jordanien (JOD)", "note": "Statut contesté ; plusieurs monnaies circulent.", "c": "Asie"}, {"n": "Panama", "f": "🇵🇦", "cap": "Panama", "big": "Panama", "cur": "balboa (PAB) et dollar américain (USD)", "note": "Le balboa est à parité avec le dollar ; seules des pièces sont émises.", "c": "Amérique centrale et Caraïbes"}, {"n": "Papouasie-Nouvelle-Guinée", "f": "🇵🇬", "cap": "Port Moresby", "big": "Port Moresby", "cur": "kina (PGK)", "note": "", "c": "Océanie"}, {"n": "Paraguay", "f": "🇵🇾", "cap": "Asuncion", "big": "Asuncion", "cur": "guarani (PYG)", "note": "", "c": "Amérique du Sud"}, {"n": "Pays-Bas", "f": "🇳🇱", "cap": "Amsterdam", "big": "Amsterdam", "cur": "euro (EUR)", "note": "La Haye est le siège du gouvernement.", "c": "Europe"}, {"n": "Pérou", "f": "🇵🇪", "cap": "Lima", "big": "Lima", "cur": "sol (PEN)", "note": "", "c": "Amérique du Sud"}, {"n": "Philippines", "f": "🇵🇭", "cap": "Manille", "big": "Manille", "cur": "peso philippin (PHP)", "note": "Quezon City est la plus grande commune ; l’agglomération de Manille est la plus peuplée.", "c": "Asie"}, {"n": "Pologne", "f": "🇵🇱", "cap": "Varsovie", "big": "Varsovie", "cur": "zloty (PLN)", "note": "", "c": "Europe"}, {"n": "Portugal", "f": "🇵🇹", "cap": "Lisbonne", "big": "Lisbonne", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Qatar", "f": "🇶🇦", "cap": "Doha", "big": "Doha", "cur": "riyal qatari (QAR)", "note": "", "c": "Asie"}, {"n": "République centrafricaine", "f": "🇨🇫", "cap": "Bangui", "big": "Bangui", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "République démocratique du Congo", "f": "🇨🇩", "cap": "Kinshasa", "big": "Kinshasa", "cur": "franc congolais (CDF)", "note": "Kinshasa est la plus grande ville francophone du monde.", "c": "Afrique"}, {"n": "République dominicaine", "f": "🇩🇴", "cap": "Saint-Domingue", "big": "Saint-Domingue", "cur": "peso dominicain (DOP)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "République du Congo", "f": "🇨🇬", "cap": "Brazzaville", "big": "Brazzaville", "cur": "franc CFA (XAF)", "note": "Pointe-Noire est la capitale économique.", "c": "Afrique"}, {"n": "Roumanie", "f": "🇷🇴", "cap": "Bucarest", "big": "Bucarest", "cur": "leu roumain (RON)", "note": "", "c": "Europe"}, {"n": "Royaume-Uni", "f": "🇬🇧", "cap": "Londres", "big": "Londres", "cur": "livre sterling (GBP)", "note": "", "c": "Europe"}, {"n": "Russie", "f": "🇷🇺", "cap": "Moscou", "big": "Moscou", "cur": "rouble (RUB)", "note": "Plus grande ville d’Europe.", "c": "Europe"}, {"n": "Rwanda", "f": "🇷🇼", "cap": "Kigali", "big": "Kigali", "cur": "franc rwandais (RWF)", "note": "", "c": "Afrique"}, {"n": "Saint-Christophe-et-Niévès", "f": "🇰🇳", "cap": "Basseterre", "big": "Basseterre", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Saint-Marin", "f": "🇸🇲", "cap": "Saint-Marin", "big": "Dogana", "cur": "euro (EUR)", "note": "Dogana, dans la commune de Serravalle, est la plus grande localité.", "c": "Europe"}, {"n": "Saint-Vincent-et-les-Grenadines", "f": "🇻🇨", "cap": "Kingstown", "big": "Kingstown", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Sainte-Lucie", "f": "🇱🇨", "cap": "Castries", "big": "Castries", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Salvador", "f": "🇸🇻", "cap": "San Salvador", "big": "San Salvador", "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2001.", "c": "Amérique centrale et Caraïbes"}, {"n": "Samoa", "f": "🇼🇸", "cap": "Apia", "big": "Apia", "cur": "tala (WST)", "note": "", "c": "Océanie"}, {"n": "São Tomé et Príncipe", "f": "🇸🇹", "cap": "São Tomé", "big": "São Tomé", "cur": "dobra (STN)", "note": "", "c": "Afrique"}, {"n": "Sénégal", "f": "🇸🇳", "cap": "Dakar", "big": "Dakar", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Serbie", "f": "🇷🇸", "cap": "Belgrade", "big": "Belgrade", "cur": "dinar serbe (RSD)", "note": "", "c": "Europe"}, {"n": "Seychelles", "f": "🇸🇨", "cap": "Victoria", "big": "Victoria", "cur": "roupie seychelloise (SCR)", "note": "", "c": "Afrique"}, {"n": "Sierra Leone", "f": "🇸🇱", "cap": "Freetown", "big": "Freetown", "cur": "leone (SLE)", "note": "Le leone a été redénominé en 2022 (mille anciens leones = un nouveau).", "c": "Afrique"}, {"n": "Singapour", "f": "🇸🇬", "cap": "Singapour", "big": "Singapour", "cur": "dollar de Singapour (SGD)", "note": "Cité-État.", "c": "Asie"}, {"n": "Slovaquie", "f": "🇸🇰", "cap": "Bratislava", "big": "Bratislava", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Slovénie", "f": "🇸🇮", "cap": "Ljubljana", "big": "Ljubljana", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Somalie", "f": "🇸🇴", "cap": "Mogadiscio", "big": "Mogadiscio", "cur": "shilling somalien (SOS)", "note": "", "c": "Afrique"}, {"n": "Soudan", "f": "🇸🇩", "cap": "Khartoum", "big": "Khartoum", "cur": "livre soudanaise (SDG)", "note": "Omdourman, dans la même agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Soudan du Sud", "f": "🇸🇸", "cap": "Djouba", "big": "Djouba", "cur": "livre sud-soudanaise (SSP)", "note": "", "c": "Afrique"}, {"n": "Sri Lanka", "f": "🇱🇰", "cap": "Sri Jayawardenepura Kotte", "big": "Colombo", "cur": "roupie srilankaise (LKR)", "note": "Colombo est la capitale économique et la plus grande ville.", "c": "Asie"}, {"n": "Suède", "f": "🇸🇪", "cap": "Stockholm", "big": "Stockholm", "cur": "couronne suédoise (SEK)", "note": "", "c": "Europe"}, {"n": "Suisse", "f": "🇨🇭", "cap": "Berne", "big": "Zurich", "cur": "franc suisse (CHF)", "note": "Berne est officiellement « ville fédérale ».", "c": "Europe"}, {"n": "Suriname", "f": "🇸🇷", "cap": "Paramaribo", "big": "Paramaribo", "cur": "dollar surinamais (SRD)", "note": "", "c": "Amérique du Sud"}, {"n": "Syrie", "f": "🇸🇾", "cap": "Damas", "big": "Damas", "cur": "livre syrienne (SYP)", "note": "Alep, longtemps la plus grande ville, a été dépassée par Damas.", "c": "Asie"}, {"n": "Tadjikistan", "f": "🇹🇯", "cap": "Douchanbé", "big": "Douchanbé", "cur": "somoni (TJS)", "note": "", "c": "Asie"}, {"n": "Tanzanie", "f": "🇹🇿", "cap": "Dodoma", "big": "Dar es Salaam", "cur": "shilling tanzanien (TZS)", "note": "Capitale transférée de Dar es Salaam à Dodoma (officielle depuis 1996).", "c": "Afrique"}, {"n": "Tchad", "f": "🇹🇩", "cap": "N’Djaména", "big": "N’Djaména", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Tchéquie", "f": "🇨🇿", "cap": "Prague", "big": "Prague", "cur": "couronne tchèque (CZK)", "note": "", "c": "Europe"}, {"n": "Thaïlande", "f": "🇹🇭", "cap": "Bangkok", "big": "Bangkok", "cur": "baht (THB)", "note": "", "c": "Asie"}, {"n": "Timor oriental", "f": "🇹🇱", "cap": "Dili", "big": "Dili", "cur": "dollar américain (USD)", "note": "", "c": "Asie"}, {"n": "Togo", "f": "🇹🇬", "cap": "Lomé", "big": "Lomé", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Tonga", "f": "🇹🇴", "cap": "Nukuʻalofa", "big": "Nukuʻalofa", "cur": "pa’anga (TOP)", "note": "", "c": "Océanie"}, {"n": "Trinité-et-Tobago", "f": "🇹🇹", "cap": "Port-d’Espagne", "big": "Port-d’Espagne", "cur": "dollar de Trinité-et-Tobago (TTD)", "note": "Chaguanas est la plus grande commune.", "c": "Amérique centrale et Caraïbes"}, {"n": "Tunisie", "f": "🇹🇳", "cap": "Tunis", "big": "Tunis", "cur": "dinar tunisien (TND)", "note": "", "c": "Afrique"}, {"n": "Turkménistan", "f": "🇹🇲", "cap": "Achgabat", "big": "Achgabat", "cur": "manat turkmène (TMT)", "note": "", "c": "Asie"}, {"n": "Turquie", "f": "🇹🇷", "cap": "Ankara", "big": "Istanbul", "cur": "livre turque (TRY)", "note": "Capitale transférée d’Istanbul à Ankara en 1923.", "c": "Asie"}, {"n": "Tuvalu", "f": "🇹🇻", "cap": "Funafuti", "big": "Funafuti", "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Ukraine", "f": "🇺🇦", "cap": "Kyiv", "big": "Kyiv", "cur": "hryvnia (UAH)", "note": "", "c": "Europe"}, {"n": "Uruguay", "f": "🇺🇾", "cap": "Montevideo", "big": "Montevideo", "cur": "peso uruguayen (UYU)", "note": "", "c": "Amérique du Sud"}, {"n": "Vanuatu", "f": "🇻🇺", "cap": "Port-Vila", "big": "Port-Vila", "cur": "vatu (VUV)", "note": "", "c": "Océanie"}, {"n": "Vatican", "f": "🇻🇦", "cap": "Cité du Vatican", "big": "Cité du Vatican", "cur": "euro (EUR)", "note": "État le moins peuplé du monde.", "c": "Europe"}, {"n": "Venezuela", "f": "🇻🇪", "cap": "Caracas", "big": "Caracas", "cur": "bolívar (VES)", "note": "", "c": "Amérique du Sud"}, {"n": "Viêt Nam", "f": "🇻🇳", "cap": "Hanoï", "big": "Hô Chi Minh-Ville", "cur": "dông (VND)", "note": "Hô Chi Minh-Ville s’appelait Saïgon.", "c": "Asie"}, {"n": "Yémen", "f": "🇾🇪", "cap": "Sanaa", "big": "Sanaa", "cur": "rial yéménite (YER)", "note": "", "c": "Asie"}, {"n": "Zambie", "f": "🇿🇲", "cap": "Lusaka", "big": "Lusaka", "cur": "kwacha zambien (ZMW)", "note": "", "c": "Afrique"}, {"n": "Zimbabwe", "f": "🇿🇼", "cap": "Harare", "big": "Harare", "cur": "ZiG – Zimbabwe Gold (ZWG) et dollar américain (USD)", "note": "Le ZiG, adossé à l’or, a remplacé le dollar zimbabwéen en 2024.", "c": "Afrique"}];
+const CONTS = ["Afrique","Amérique du Nord","Amérique centrale et Caraïbes","Amérique du Sud","Asie","Europe","Océanie"];
+const LAB = {cap:"Capitale", big:"Plus grande ville", cur:"Monnaie"};
+
+/* ---------- stockage (dégradation propre si indisponible) ---------- */
+const mem = {};
+const store = {
+  get(k){ try{ const v = localStorage.getItem(k); return v===null? (k in mem? mem[k]:null) : v; }catch(e){ return k in mem? mem[k]:null; } },
+  set(k,v){ mem[k]=v; try{ localStorage.setItem(k,v); }catch(e){} }
+};
+let marks = {};
+try{ marks = JSON.parse(store.get('bap_marks')||'{}') || {}; }catch(e){ marks = {}; }
+/* filet de sécurité : si la liste principale est vide ou illisible mais qu'une
+   sauvegarde existe, on repart de la sauvegarde plutôt que d'une liste vide. */
+try{
+  if(!Object.keys(marks).length){
+    const bak = JSON.parse(store.get('bap_marks_bak')||'null');
+    if(bak && typeof bak === 'object' && Object.keys(bak).length) marks = bak;
+  }
+}catch(e){}
+
+const markOf = n => marks[n] || 'ND';
+function saveMarks(){
+  const payload = JSON.stringify(marks);
+  store.set('bap_marks', payload);
+  if(Object.keys(marks).length) store.set('bap_marks_bak', payload);
+}
+function setMark(n,s){
+  if(s==='ND') delete marks[n]; else marks[n]=s;
+  markRev++;
+  saveMarks();
+  scheduleGhSave();
+}
+function nbAcquis(){ return Object.values(marks).filter(v=>v==='acquis').length; }
+function nbRevoir(){ return Object.values(marks).filter(v=>v==='revoir').length; }
+
+/* ---------- synchronisation GitHub ----------
+   Même moteur que Boîte à mots : on ne remplace jamais l'état distant, on lui
+   applique les seules éditions faites localement depuis la dernière
+   synchronisation réussie, avec garde-fous contre les suppressions de masse. */
+const GH_FILE = 'pays-marques.json';
+const DEFAULT_REPO = 'victortisme/Boite-a-pays';
+let ghRepo = store.get('bap_gh_repo') || DEFAULT_REPO;
+let ghToken = store.get('bap_gh_token') || '';
+let ghSha = null, syncTimer = null, ghSaving = false;
+/* markRev augmente à chaque modification locale : une fusion calculée avant une
+   modification ne doit jamais être réappliquée après. */
+let markRev = 0;
+
+const ghApi = () => 'https://api.github.com/repos/' + ghRepo + '/contents/' + GH_FILE;
+function b64enc(s){ return btoa(unescape(encodeURIComponent(s))); }
+function b64dec(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
+function setSyncStatus(t){ const el = $('syncstatus'); if(el) el.textContent = t; }
+function syncedMsg(){ return '☁️ Synchronisé (' + nbAcquis() + ' acquis · ' + nbRevoir() + ' à revoir)'; }
+
+function toggleSyncSetup(){
+  const p = $('syncsetup');
+  const open = p.style.display === 'none';
+  p.style.display = open ? 'flex' : 'none';
+  if(open){
+    $('ghtoken').value = ghToken;
+    $('ghrepo').value = ghRepo;
+    setTimeout(()=>$('ghtoken').focus(), 50);
+  }
+}
+async function pasteToken(){
+  try{
+    const t = await navigator.clipboard.readText();
+    if(t) $('ghtoken').value = t.trim();
+    else alert('Presse-papiers vide.');
+  }catch(e){
+    alert('Collage automatique refusé par le navigateur : appuyez longuement dans le champ puis choisissez « Coller ».');
+    $('ghtoken').focus();
+  }
+}
+function saveGhToken(){
+  const repo = $('ghrepo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/^\/|\/$/g,'');
+  if(repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)){
+    alert('Le dépôt doit s’écrire « propriétaire/nom », par exemple ' + DEFAULT_REPO + '.');
+    return;
+  }
+  ghRepo = repo || DEFAULT_REPO;
+  ghToken = $('ghtoken').value.replace(/\s+/g,'').trim();
+  if(ghToken && !/^gh[pousr]_|^github_pat_/.test(ghToken)){
+    if(!confirm('Ce texte ne ressemble pas à un jeton GitHub. L’enregistrer quand même ?')) return;
+  }
+  store.set('bap_gh_repo', ghRepo);
+  store.set('bap_gh_token', ghToken);
+  ghSha = null;
+  $('syncsetup').style.display = 'none';
+  if(ghToken){ setSyncStatus('☁️ Jeton enregistré — connexion…'); ghLoad(); }
+  else setSyncStatus('☁️ Jeton effacé — marquages locaux uniquement');
+}
+
+/* état de la dernière synchronisation réussie, pour ne pousser que les vraies éditions locales */
+function readBase(){ try{ return JSON.parse(store.get('bap_base')||'{}') || {}; }catch(e){ return {}; } }
+function writeBase(m){ store.set('bap_base', JSON.stringify(m)); }
+function parseMarks(raw){
+  const out = {};
+  if(raw && typeof raw === 'object' && !Array.isArray(raw)){
+    for(const k in raw){ const v = String(raw[k]); if(v==='acquis'||v==='revoir') out[k] = v; }
+  }
+  return out;
+}
+/* Nombre maximal de retours à « ND » transmissibles en une synchronisation.
+   Au-delà, il ne s'agit plus d'une édition mais d'une perte du stockage local. */
+const MAX_SUPPR = 5;
+function countSuppr(edits){ let n = 0; for(const k in edits){ if(edits[k] === 'ND') n++; } return n; }
+/* Renvoie les éditions locales, ou null si l'état local est jugé non fiable
+   (null = « ne rien envoyer, recharger depuis GitHub »). */
+function localEdits(){
+  const base = readBase(), edits = {};
+  // Cas 1 : liste locale vide alors que la base ne l'est pas → perte de données.
+  if(!Object.keys(marks).length && Object.keys(base).length) return null;
+  new Set([...Object.keys(marks), ...Object.keys(base)]).forEach(k=>{
+    const now = marks[k] || 'ND', before = base[k] || 'ND';
+    if(now !== before) edits[k] = now;
+  });
+  // Cas 2 : suppression de masse.
+  if(countSuppr(edits) > MAX_SUPPR) return null;
+  return edits;
+}
+function applyEdits(remote, edits){
+  const merged = Object.assign({}, remote);
+  for(const k in edits){ if(edits[k]==='ND') delete merged[k]; else merged[k] = edits[k]; }
+  return merged;
+}
+function resetFromRemote(remote, msg){
+  marks = remote;
+  saveMarks(); writeBase(remote); refreshMarkUI();
+  setSyncStatus(msg);
+}
+/* Lecture distante. Renvoie {marks, sha} ou null si la lecture a échoué.
+   Un 404 signifie « fichier pas encore créé » : état distant vide, pas d'échec. */
+async function ghRead(){
+  const headers = ghToken ? {Authorization:'Bearer '+ghToken} : {};
+  const r = await fetch(ghApi() + '?ref=main&t=' + Date.now(), {cache:'no-store', headers});
+  if(r.status === 404) return {marks:{}, sha:null, missing:true};
+  if(!r.ok) return null;
+  const j = await r.json();
+  return {marks: parseMarks(JSON.parse(b64dec(j.content))), sha: j.sha, missing:false};
+}
+
+async function ghLoad(){
+  if(!ghToken && ghRepo === DEFAULT_REPO){ /* lecture publique possible : on tente quand même */ }
+  const rev0 = markRev;
+  let res;
+  try{ res = await ghRead(); }catch(e){ res = null; }
+  if(res === null){
+    setSyncStatus(ghToken ? '☁️ Connexion impossible — marquages locaux utilisés'
+                          : '☁️ Marquages locaux — configurez le jeton pour synchroniser');
+    return;
+  }
+  ghSha = res.sha;
+  const remote = res.marks;
+  if(markRev !== rev0){
+    // marquage modifié pendant le chargement : on fusionne au lieu d'écraser
+    const e0 = localEdits();
+    if(e0){ marks = applyEdits(remote, e0); saveMarks(); refreshMarkUI(); }
+    if(ghToken) scheduleGhSave();
+    return;
+  }
+  const edits = localEdits();
+  if(edits === null){
+    resetFromRemote(remote, '☁️ Liste locale incohérente — rechargée depuis GitHub (aucune suppression envoyée)');
+  } else if(Object.keys(edits).length){
+    marks = applyEdits(remote, edits);
+    saveMarks(); refreshMarkUI();
+    if(ghToken) scheduleGhSave();
+    else setSyncStatus('☁️ Modifications locales non envoyées — jeton requis');
+  } else {
+    marks = remote;
+    saveMarks(); writeBase(remote); refreshMarkUI();
+    if(res.missing) setSyncStatus(ghToken ? '☁️ Prêt — ' + GH_FILE + ' sera créé au premier marquage'
+                                          : '☁️ Aucun fichier distant — configurez le jeton');
+    else setSyncStatus(ghToken ? syncedMsg() : '☁️ Liste partagée chargée — lecture seule sans jeton');
+  }
+}
+
+function scheduleGhSave(){
+  if(!ghToken){ setSyncStatus('☁️ Modifié localement — jeton requis pour synchroniser'); return; }
+  setSyncStatus('☁️ Enregistrement…');
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(()=>ghSave(false), 1500);
+}
+async function ghSave(isRetry){
+  if(ghSaving){ clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(false), 700); return; }
+  ghSaving = true;
+  try{
+    // 1. relire l'état distant pour fusionner au lieu de remplacer
+    let res = null;
+    try{ res = await ghRead(); }catch(e){ res = null; }
+    if(res === null){
+      setSyncStatus('☁️ Lecture GitHub impossible — enregistrement reporté');
+      clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(false), 6000);
+      return;
+    }
+    ghSha = res.sha;
+    const remote = res.marks;
+    // 2. appliquer uniquement les éditions locales sur cet état
+    const rev = markRev;            // toute modification ultérieure invalide cette fusion
+    const edits = localEdits();
+    if(edits === null){
+      resetFromRemote(remote, '⚠️ Suppression massive bloquée — liste rechargée depuis GitHub');
+      return;
+    }
+    const merged = applyEdits(remote, edits);
+    // 3. garde-fou final : ne jamais publier un fichier vide ou brutalement amputé
+    const nRemote = Object.keys(remote).length, nMerged = Object.keys(merged).length;
+    if(nRemote && (!nMerged || nMerged < nRemote - MAX_SUPPR)){
+      resetFromRemote(remote, '⚠️ Enregistrement annulé : perte anormale de marquages — liste rechargée');
+      return;
+    }
+    const sorted = {};
+    Object.keys(merged).sort((a,b)=>a.localeCompare(b,'fr')).forEach(k=>{ sorted[k] = merged[k]; });
+    const body = {
+      message: 'Mise à jour des marquages',
+      content: b64enc(JSON.stringify(sorted, null, 1)),
+      branch: 'main'
+    };
+    if(ghSha) body.sha = ghSha;
+    const r = await fetch(ghApi(), {
+      method:'PUT',
+      headers:{Authorization:'Bearer '+ghToken, 'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if((r.status === 409 || r.status === 422) && !isRetry){
+      clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(true), 400);
+      return;
+    }
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    ghSha = j.content.sha;
+    if(markRev === rev){
+      marks = merged;
+      saveMarks(); writeBase(merged); refreshMarkUI();
+      setSyncStatus(syncedMsg());
+    }else{
+      // modifié pendant l'envoi : on garde l'état local et on renvoie
+      setSyncStatus('☁️ Enregistrement…');
+      clearTimeout(syncTimer); syncTimer = setTimeout(()=>ghSave(false), 900);
+    }
+  }catch(e){
+    setSyncStatus('☁️ Échec de l’enregistrement — vérifiez le jeton, le dépôt et la connexion');
+  }finally{
+    ghSaving = false;
+  }
+}
+
+/* ---------- état ---------- */
+let mode = 1;                 // 1 fiche, 2 révélation, 3 quiz, 4 explorer
+let pool = 'tous';
+let sel = new Set(CONTS);
+let fields = new Set(['cap','big','cur']);
+let randLimit = 0;
+let list = [], idx = 0, shown = 0;
+let quizList = [], qi = 0, qgood = 0, qdone = 0, qcur = null;
+let exCur = null;
+
+const $ = id => document.getElementById(id);
+const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+
+/* ---------- accueil ---------- */
+function buildCats(){
+  const g = $('catgrid');
+  g.innerHTML = CONTS.map(c=>{
+    const n = DATA.filter(p=>p.c===c).length;
+    return `<label class="catitem"><input type="checkbox" ${sel.has(c)?'checked':''} onchange="toggleCat('${c.replace(/'/g,"\\'")}',this.checked)"><span>${c}</span><span class="cnt">${n}</span></label>`;
+  }).join('');
+  updCount();
+}
+function toggleCat(c,on){ on? sel.add(c) : sel.delete(c); randLimit = 0; updCount(); }
+function allCats(on){ sel = on? new Set(CONTS) : new Set(); randLimit = 0; buildCats(); }
+function randomPick(){
+  const n = Math.max(1, Math.min(195, parseInt($('nbRand').value||'20',10)));
+  randLimit = n; updCount();
+}
+function base(){
+  let l = DATA.filter(p=>sel.has(p.c));
+  if(pool!=='tous') l = l.filter(p=>markOf(p.n)===pool);
+  return l;
+}
+function updCount(){
+  const n = base().length;
+  const r = randLimit? ` — tirage de ${Math.min(randLimit,n)} au hasard` : '';
+  $('selcount').textContent = `${n} pays sélectionné${n>1?'s':''}${r}`;
+  $('startBtn').disabled = n===0;
+  $('startBtn').style.opacity = n===0? .4 : 1;
+}
+function setPool(p){
+  pool = p;
+  document.querySelectorAll('#poolpanel .chip').forEach(b=>b.classList.toggle('on', b.dataset.p===p));
+  updCount();
+}
+function toggleField(f){
+  if(fields.has(f)){ if(fields.size===1) return; fields.delete(f); } else fields.add(f);
+  document.querySelectorAll('#quizpanel .chip').forEach(b=>b.classList.toggle('on', fields.has(b.dataset.q)));
+}
+function setMode(m){
+  mode = m;
+  [1,2,3,4].forEach(i=>$('mode'+i+'btn').classList.toggle('selected', i===m));
+  const explore = m===4;
+  $('catpanel').style.display = explore? 'none':'flex';
+  $('poolpanel').style.display = explore? 'none':'block';
+  $('quizpanel').style.display = m===3? 'block':'none';
+  $('expanel').style.display = explore? 'block':'none';
+  $('startBtn').style.display = explore? 'none':'inline-block';
+  $('homefoot').textContent = explore? 'Recherche par pays, capitale, ville ou monnaie'
+                                     : '195 pays — 193 membres de l’ONU + Vatican et Palestine';
+  if(explore){ $('exInput').focus(); }
+}
+
+/* ---------- session fiches ---------- */
+function startSession(){
+  let l = shuffle(base().slice());
+  if(randLimit) l = l.slice(0, randLimit);
+  if(!l.length) return;
+  if(mode===3){ quizList = l; qi = 0; qgood = 0; qdone = 0; show('quiz'); quizAsk(); return; }
+  list = l; idx = 0; show('play'); render();
+}
+function show(id){
+  ['home','play','quiz'].forEach(s=>$(s).classList.toggle('active', s===id));
+  document.body.classList.toggle('playing', id==='play');
+  window.scrollTo(0,0);
+}
+function goHome(){ show('home'); buildCats(); updCount(); }
+function shuffleNow(){ shuffle(list); idx = 0; render(); }
+
+function factHTML(p,f,hidden){
+  return `<div class="fact ${hidden?'hidden':''}" data-f="${f}" onclick="revealOne('${f}',event)">
+            <span class="lab">${LAB[f]}</span>
+            <span class="val">${hidden? '• • •' : p[f]}</span>
+          </div>`;
+}
+function render(){
+  const p = list[idx];
+  shown = mode===2? 0 : 3;
+  $('counter').textContent = `${idx+1} / ${list.length}`;
+  const order = ['cap','big','cur'];
+  $('playcard').innerHTML =
+    `<div class="flag">${p.f}</div>
+     <div class="word">${p.n}</div>
+     <div class="diffrow">${segHTML(p.n)}</div>
+     <div class="meanings">${order.map((f,i)=>factHTML(p,f, mode===2 && i>=shown)).join('')}</div>
+     ${p.note? `<div class="note">${p.note}</div>`:''}`;
+  const b = $('revealBtn');
+  b.style.display = mode===2? 'block':'none';
+  b.disabled = false;
+  b.textContent = mode===2? '👁 Révéler' : '👁 Révéler';
+  paintSideBtns();
+}
+function revealOne(f, ev){
+  if(mode!==2) return;
+  const el = document.querySelector(`#playcard .fact[data-f="${f}"]`);
+  // case déjà visible : on laisse l'événement remonter pour avancer d'une fiche
+  if(!el || !el.classList.contains('hidden')) return;
+  if(ev) ev.stopPropagation();
+  el.classList.remove('hidden');
+  el.querySelector('.val').textContent = list[idx][f];
+  shown++;
+  if(shown>=3) $('revealBtn').textContent = 'Suivant ▶';
+}
+/* Révèle le fait suivant ; une fois tout révélé, passe au pays suivant.
+   Hors mode Révélation, avance simplement. */
+function revealOrNext(){
+  if(mode!==2){ nav(1); return; }
+  const next = document.querySelector('#playcard .fact.hidden');
+  if(next){ revealOne(next.dataset.f); return; }
+  nav(1);
+}
+function nav(d){
+  idx = (idx + d + list.length) % list.length;
+  render();
+}
+function segHTML(n){
+  const s = markOf(n);
+  const b = (v,t)=>`<button data-s="${v}" class="${s===v?'on':''}" onclick="mark('${n.replace(/'/g,"\\'")}','${v}')">${t}</button>`;
+  return `<span class="diffseg">${b('ND','ND')}${b('acquis','✅ acquis')}${b('revoir','🔥 à revoir')}</span>`;
+}
+function mark(n,s){
+  setMark(n, markOf(n)===s? 'ND' : s);
+  refreshMarkUI();
+}
+/* Classe le pays affiché sur la fiche : boutons latéraux et touches Q / D. */
+function markCurrent(s){
+  if(!document.body.classList.contains('playing')) return;
+  const p = list[idx];
+  if(p) mark(p.n, s);
+}
+function paintSideBtns(){
+  const p = document.body.classList.contains('playing') ? list[idx] : null;
+  const s = p ? markOf(p.n) : 'ND';
+  const l = $('sideRevoir'), r = $('sideAcquis');
+  if(l) l.classList.toggle('on', s==='revoir');
+  if(r) r.classList.toggle('on', s==='acquis');
+}
+function refreshMarkUI(){
+  const pRow = document.querySelector('#playcard .diffrow');
+  if(pRow && list[idx]) pRow.innerHTML = segHTML(list[idx].n);
+  const eRow = document.querySelector('#exCard .diffrow');
+  if(eRow && exCur) eRow.innerHTML = segHTML(exCur);
+  paintSideBtns();
+  if($('home').classList.contains('active')) updCount();
+}
+
+/* ---------- quiz ---------- */
+function quizAsk(){
+  if(qi >= quizList.length) qi = 0;
+  const p = quizList[qi];
+  const fs = [...fields];
+  const f = fs[Math.floor(Math.random()*fs.length)];
+  const pooled = DATA.filter(x => x[f] !== p[f]);
+  const opts = shuffle(pooled.slice()).filter((x,i,a)=>a.findIndex(y=>y[f]===x[f])===i).slice(0,3).map(x=>x[f]);
+  qcur = {p, f, answer: p[f], options: shuffle(opts.concat([p[f]]))};
+  const q = f==='cap'? `Quelle est la capitale de…` : f==='big'? `Quelle est la plus grande ville de…` : `Quelle est la monnaie de…`;
+  $('qcounter').textContent = `${qi+1} / ${quizList.length}`;
+  $('qscore').textContent = qdone? `${qgood} / ${qdone}` : '';
+  $('quizcard').innerHTML =
+    `<p class="qask">${q}</p>
+     <div class="flag">${p.f}</div>
+     <div class="word">${p.n}</div>
+     <div class="qopts">${qcur.options.map(o=>`<button class="qopt" onclick="answer(this)">${o}</button>`).join('')}</div>
+     <div class="note" id="qnote" style="display:none"></div>`;
+}
+function answer(btn){
+  const good = btn.textContent === qcur.answer;
+  document.querySelectorAll('#quizcard .qopt').forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === qcur.answer) b.classList.add('good');
+    else if(b === btn) b.classList.add('bad');
+  });
+  qdone++; if(good) qgood++;
+  setMark(qcur.p.n, good? 'acquis':'revoir');
+  $('qscore').textContent = `${qgood} / ${qdone}`;
+  const p = qcur.p;
+  const rest = ['cap','big','cur'].filter(f=>f!==qcur.f).map(f=>`${LAB[f]} : ${p[f]}`).join(' · ');
+  const n = $('qnote');
+  n.style.display = 'block';
+  n.innerHTML = `${rest}${p.note? '<br>'+p.note : ''}`;
+}
+function quizNext(){ qi++; if(qi>=quizList.length){ qi = 0; shuffle(quizList); } quizAsk(); }
+
+/* ---------- explorer ---------- */
+function exSearch(){
+  const q = norm($('exInput').value.trim());
+  const sug = $('exSug'), card = $('exCard');
+  if(q.length < 2){ sug.innerHTML = ''; card.style.display='none'; return; }
+  const hits = DATA.filter(p => norm(p.n).includes(q) || norm(p.cap).includes(q) || norm(p.big).includes(q) || norm(p.cur).includes(q)).slice(0,12);
+  if(!hits.length){ sug.innerHTML = '<span class="exnone">Aucun résultat</span>'; card.style.display='none'; return; }
+  sug.innerHTML = hits.map(p=>`<button onclick="exShow('${p.n.replace(/'/g,"\\'")}')">${p.f} ${p.n}</button>`).join('');
+  if(hits.length===1) exShow(hits[0].n);
+}
+function exShow(n){
+  const p = DATA.find(x=>x.n===n);
+  if(!p) return;
+  exCur = p.n;
+  const card = $('exCard');
+  card.style.display = 'flex';
+  card.innerHTML =
+    `<div class="flag">${p.f}</div>
+     <div class="word">${p.n}</div>
+     <div class="diffrow">${segHTML(p.n)}</div>
+     <div class="meanings">${['cap','big','cur'].map(f=>factHTML(p,f,false)).join('')}</div>
+     ${p.note? `<div class="note">${p.note}</div>`:''}`;
+}
+
+/* ---------- révélation au clic sur l'écran ---------- */
+document.addEventListener('click', e=>{
+  if(!document.body.classList.contains('playing')) return;
+  // les commandes gardent leur propre comportement
+  if(e.target.closest('button, input, a, select, textarea, .diffseg, .topbar, .controls, .sidebtn')) return;
+  // une case masquée gère elle-même sa révélation : ne pas en dévoiler deux d'un coup
+  if(e.target.closest('.fact.hidden')) return;
+  revealOrNext();
+});
+
+/* ---------- clavier ---------- */
+document.addEventListener('keydown', e=>{
+  const t = e.target;
+  if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+  if($('syncsetup').style.display !== 'none') return;
+  if(!document.body.classList.contains('playing')) return;
+  const k = e.key;
+  if(k === 'ArrowRight' || k === 'ArrowDown'){ e.preventDefault(); revealOrNext(); }
+  else if(k === 'ArrowLeft' || k === 'ArrowUp'){ e.preventDefault(); nav(-1); }
+  else if(k === ' ' || k === 'Enter'){ e.preventDefault(); revealOrNext(); }
+  else if(k === 'q' || k === 'Q'){ e.preventDefault(); markCurrent('revoir'); }
+  else if(k === 'd' || k === 'D'){ e.preventDefault(); markCurrent('acquis'); }
+  else if(k === 'n' || k === 'N'){
+    e.preventDefault();
+    const p = list[idx];
+    if(p){ setMark(p.n, 'ND'); refreshMarkUI(); }
+  }
+  else if(k === 'Escape'){ goHome(); }
+});
+
+/* ---------- balayage tactile ---------- */
+(function(){
+  let x0 = null, y0 = null;
+  document.addEventListener('touchstart', e=>{
+    if(document.body.classList.contains('playing')){ x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }
+  }, {passive:true});
+  document.addEventListener('touchend', e=>{
+    if(x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    x0 = null;
+    if(Math.abs(dx) > 70 && Math.abs(dx) > 2*Math.abs(dy)){
+      if(dx < 0) revealOrNext(); else nav(-1);
+    }
+  }, {passive:true});
+})();
+
+buildCats();
+ghLoad();
+</script>
+</body>
+</html>
