@@ -29,7 +29,7 @@ body{
 .screen.active{display:block;}
 h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px;}
 .titlerow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 2px 2px;flex:none;}
-.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 8px;flex:none;}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 8px;flex:none;}
 .mode-btn{
   border:0;border-radius:12px;padding:7px 2px;text-align:center;cursor:pointer;
   background:var(--card);color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.22);
@@ -62,7 +62,23 @@ h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px;}
 }
 .word{font-size:clamp(26px,7.5vw,38px);font-weight:800;text-align:center;margin:2px 0 4px;line-height:1.15;}
 .flag{font-size:34px;text-align:center;margin-bottom:6px;line-height:1;}
-.meanings{display:grid;gap:12px;flex:1;align-content:start;}
+.meanings{display:grid;gap:10px;flex:1;align-content:start;}
+.frow{display:grid;grid-template-columns:minmax(0,1fr) 3rem 3.5rem;gap:5px;align-items:start;}
+/* Libellé de capitale très long (Afrique du Sud, Bolivie…) : la ville prend toute
+   la largeur et les deux coordonnées passent dessous, sans changer l'ordre de révélation. */
+.frow.long{grid-template-columns:1fr;}
+.frow.long .csub{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.fact.coord{padding:10px 2px;}
+.fact.coord .lab{letter-spacing:.5px;font-size:9.5px;margin-bottom:3px;}
+.fact.coord .val{font-size:14.5px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.fact.city .lab{font-size:9.5px;letter-spacing:.5px;}
+.fact.city{padding:11px 10px;}
+.fact.city .val{font-size:15.5px;line-height:1.2;overflow-wrap:break-word;}
+/* nom d'un seul tenant trop long pour la colonne (Johannesburg, Antananarivo…) */
+.fact.city.tight .val{font-size:13.5px;}
+.frow.long .fact.city{padding:11px 14px;}
+.frow.long .fact.city.tight .val{font-size:17px;}
+.frow.long .fact.city .val{font-size:17px;}
 .fact{
   color:#fff;background:var(--accent);padding:11px 14px;border-radius:14px;text-align:center;
   box-shadow:0 3px 10px rgba(29,111,216,.3);cursor:default;
@@ -104,16 +120,6 @@ h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px;}
 .diffseg button.on[data-s="acquis"]{background:var(--accent2);color:#fff;}
 .diffseg button.on[data-s="revoir"]{background:var(--gold);color:#132437;}
 .diffrow{text-align:center;margin:0 0 10px;}
-.qopts{display:grid;gap:9px;margin-top:6px;}
-.qopt{
-  border:0;border-radius:14px;padding:14px 12px;font-size:16px;font-weight:700;cursor:pointer;
-  background:#eef2f8;color:var(--ink);text-align:left;line-height:1.3;
-}
-.qopt.good{background:var(--accent2);color:#fff;}
-.qopt.bad{background:var(--danger);color:#fff;}
-.qopt[disabled]{cursor:default;}
-.qask{font-size:15px;color:var(--muted);text-align:center;margin:0 0 10px;font-weight:700;}
-.score{font-size:14px;color:#bcd0e8;font-variant-numeric:tabular-nums;}
 
 /* ---------- boutons latéraux de classement ---------- */
 .sidebtn{
@@ -146,6 +152,32 @@ body.playing .sidebtn{display:flex;}
 .tokfield{width:100%;font-size:13px;padding:10px;border-radius:10px;border:0;background:#fff;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical;}
 .dlgrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
 .dlghelp{font-size:11.5px;line-height:1.55;color:#9db2cd;margin:12px 0 0;}
+
+/* ---------- bilan de fin de session ---------- */
+.recaphead{text-align:center;margin-bottom:4px;}
+.recaphead .big{font-size:38px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;}
+.recaphead .sub{font-size:13.5px;color:var(--muted);margin-top:2px;}
+.recapstats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px;}
+.rstat{background:#eef2f8;border-radius:12px;padding:9px 6px;text-align:center;}
+.rstat b{display:block;font-size:20px;font-variant-numeric:tabular-nums;}
+.rstat span{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;}
+.recaplist{margin-top:10px;border-top:1px solid #e3e9f2;padding-top:8px;overflow-y:auto;}
+.recaplist h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.recaplist .ritem{font-size:14px;padding:3px 0;color:var(--ink);}
+.recaplist .ritem .rf{font-size:15px;margin-right:5px;}
+.recaplist .rans{color:var(--muted);font-size:12.5px;}
+
+/* ---------- progression ---------- */
+.progrow{margin-bottom:11px;}
+.progrow .ptop{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
+.progrow .ptop b{font-weight:700;}
+.progrow .ptop span{color:#bcd0e8;font-variant-numeric:tabular-nums;font-size:12px;}
+.pbar{display:flex;height:11px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.13);}
+.pbar i{display:block;height:100%;}
+.pbar .pa{background:var(--accent2);}
+.pbar .pr{background:var(--gold);}
+.proglegend{display:flex;gap:12px;justify-content:center;font-size:11.5px;color:#9db2cd;margin-top:12px;flex-wrap:wrap;}
+.proglegend b{font-weight:700;color:#fff;}
 </style>
 </head>
 <body>
@@ -165,15 +197,13 @@ body.playing .sidebtn{display:flex;}
       <span class="ico">🙈</span><b>Révélation</b>
     </button>
     <button class="mode-btn" id="mode3btn" onclick="setMode(3)">
-      <span class="ico">🎯</span><b>Quiz</b>
-    </button>
-    <button class="mode-btn" id="mode4btn" onclick="setMode(4)">
       <span class="ico">🔍</span><b>Explorer</b>
     </button>
   </div>
 
   <div class="panel" id="syncpanel">
     <div class="selcount" id="syncstatus">☁️ Chargement…</div>
+    <button class="smallbtn gold" onclick="toggleProgress()">📊 Progression</button>
     <button class="smallbtn" onclick="toggleSyncSetup()">Configurer</button>
   </div>
 
@@ -184,15 +214,6 @@ body.playing .sidebtn{display:flex;}
       <button class="chip" data-p="revoir" onclick="setPool('revoir')">🔥 À revoir</button>
       <button class="chip" data-p="acquis" onclick="setPool('acquis')">✅ Acquis</button>
       <button class="chip" data-p="ND" onclick="setPool('ND')">ND</button>
-    </div>
-  </div>
-
-  <div class="panel" id="quizpanel" style="display:none">
-    <h3>Questions posées</h3>
-    <div class="row">
-      <button class="chip on" data-q="cap" onclick="toggleField('cap')">Capitale</button>
-      <button class="chip on" data-q="big" onclick="toggleField('big')">Plus grande ville</button>
-      <button class="chip on" data-q="cur" onclick="toggleField('cur')">Monnaie</button>
     </div>
   </div>
 
@@ -244,6 +265,20 @@ body.playing .sidebtn{display:flex;}
   </div>
 </div>
 
+<!-- PROGRESSION -->
+<div id="progress" class="dlgback" style="display:none" onclick="if(event.target===this)toggleProgress()">
+  <div class="dlg">
+    <h3>Progression par continent</h3>
+    <div id="progbody"></div>
+    <div class="proglegend">
+      <span><b>✅</b> acquis</span><span><b>🔥</b> à revoir</span><span><b>·</b> non classé</span>
+    </div>
+    <div class="dlgrow">
+      <button class="smallbtn" onclick="toggleProgress()">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- FICHE -->
 <div class="screen" id="play">
   <div class="topbar">
@@ -253,11 +288,11 @@ body.playing .sidebtn{display:flex;}
   </div>
   <div class="card" id="playcard"></div>
   <div class="controls">
-    <button class="ctrl prev" onclick="nav(-1)">◀ Préc.</button>
+    <button class="ctrl prev" id="prevBtn" onclick="nav(-1)">◀ Préc.</button>
     <button class="ctrl reveal" id="revealBtn" onclick="revealOrNext()">👁 Révéler</button>
     <button class="ctrl next" id="nextBtn" onclick="nav(1)">Suiv. ▶</button>
   </div>
-  <p class="foot">Cliquez l’écran ou → / ↓ pour révéler · Q à revoir · D acquis</p>
+  <p class="foot">Cliquez l’écran ou → / ↓ pour révéler · Q à revoir · D acquis · N non classé</p>
 </div>
 
 <!-- BOUTONS LATÉRAUX DE CLASSEMENT -->
@@ -268,21 +303,20 @@ body.playing .sidebtn{display:flex;}
   <span class="ico">✅</span><span class="txt">acquis</span><span class="key">D</span>
 </button>
 
-<!-- QUIZ -->
-<div class="screen" id="quiz">
+<!-- BILAN DE FIN DE SESSION -->
+<div class="screen" id="recap">
   <div class="topbar">
     <button class="back" onclick="goHome()">← Menu</button>
-    <span class="counter" id="qcounter"></span>
-    <span class="score" id="qscore"></span>
+    <span class="counter" id="rcounter"></span>
+    <span style="width:64px"></span>
   </div>
-  <div class="card" id="quizcard"></div>
-  <div class="controls">
-    <button class="ctrl next" id="qnext" onclick="quizNext()" style="flex:1">Question suivante ▶</button>
-  </div>
-  <p class="foot">Une bonne réponse marque le pays comme acquis, une erreur le place à revoir</p>
+  <div class="card" id="recapcard"></div>
+  <div class="controls" id="recapctrl"></div>
+  <p class="foot" id="recapfoot"></p>
 </div>
+
 <script>
-const DATA = [{"n": "Afghanistan", "f": "🇦🇫", "cap": "Kaboul", "big": "Kaboul", "cur": "afghani (AFN)", "note": "", "c": "Asie"}, {"n": "Afrique du Sud", "f": "🇿🇦", "cap": "Pretoria (exécutif), Le Cap (législatif), Bloemfontein (judiciaire)", "big": "Johannesburg", "cur": "rand (ZAR)", "note": "Seul pays à avoir trois capitales.", "c": "Afrique"}, {"n": "Albanie", "f": "🇦🇱", "cap": "Tirana", "big": "Tirana", "cur": "lek (ALL)", "note": "", "c": "Europe"}, {"n": "Algérie", "f": "🇩🇿", "cap": "Alger", "big": "Alger", "cur": "dinar algérien (DZD)", "note": "", "c": "Afrique"}, {"n": "Allemagne", "f": "🇩🇪", "cap": "Berlin", "big": "Berlin", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Andorre", "f": "🇦🇩", "cap": "Andorre-la-Vieille", "big": "Andorre-la-Vieille", "cur": "euro (EUR)", "note": "L'Andorre utilise l'euro sans appartenir à l'UE.", "c": "Europe"}, {"n": "Angola", "f": "🇦🇴", "cap": "Luanda", "big": "Luanda", "cur": "kwanza (AOA)", "note": "", "c": "Afrique"}, {"n": "Antigua-et-Barbuda", "f": "🇦🇬", "cap": "Saint John's", "big": "Saint John's", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Arabie Saoudite", "f": "🇸🇦", "cap": "Riyad", "big": "Riyad", "cur": "riyal saoudien (SAR)", "note": "", "c": "Asie"}, {"n": "Argentine", "f": "🇦🇷", "cap": "Buenos Aires", "big": "Buenos Aires", "cur": "peso argentin (ARS)", "note": "", "c": "Amérique du Sud"}, {"n": "Arménie", "f": "🇦🇲", "cap": "Erevan", "big": "Erevan", "cur": "dram (AMD)", "note": "", "c": "Asie"}, {"n": "Australie", "f": "🇦🇺", "cap": "Canberra", "big": "Sydney", "cur": "dollar australien (AUD)", "note": "Sydney et Melbourne sont au coude à coude : selon le découpage retenu par l'office statistique australien, Melbourne est passée en tête certaines années.", "c": "Océanie"}, {"n": "Autriche", "f": "🇦🇹", "cap": "Vienne", "big": "Vienne", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Azerbaïdjan", "f": "🇦🇿", "cap": "Bakou", "big": "Bakou", "cur": "manat azerbaïdjanais (AZN)", "note": "", "c": "Asie"}, {"n": "Bahamas", "f": "🇧🇸", "cap": "Nassau", "big": "Nassau", "cur": "dollar bahaméen (BSD)", "note": "Le dollar américain circule à parité.", "c": "Amérique centrale et Caraïbes"}, {"n": "Bahreïn", "f": "🇧🇭", "cap": "Manama", "big": "Manama", "cur": "dinar bahreïni (BHD)", "note": "", "c": "Asie"}, {"n": "Bangladesh", "f": "🇧🇩", "cap": "Dacca", "big": "Dacca", "cur": "taka (BDT)", "note": "", "c": "Asie"}, {"n": "Barbade", "f": "🇧🇧", "cap": "Bridgetown", "big": "Bridgetown", "cur": "dollar barbadien (BBD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Belgique", "f": "🇧🇪", "cap": "Bruxelles", "big": "Bruxelles", "cur": "euro (EUR)", "note": "Anvers est la plus grande commune ; l'agglomération bruxelloise reste la plus peuplée.", "c": "Europe"}, {"n": "Belize", "f": "🇧🇿", "cap": "Belmopan", "big": "Belize City", "cur": "dollar bélizien (BZD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Bénin", "f": "🇧🇯", "cap": "Porto-Novo", "big": "Cotonou", "cur": "franc CFA (XOF)", "note": "Cotonou est le siège du gouvernement.", "c": "Afrique"}, {"n": "Bhoutan", "f": "🇧🇹", "cap": "Thimphou", "big": "Thimphou", "cur": "ngultrum (BTN)", "note": "La roupie indienne circule à parité.", "c": "Asie"}, {"n": "Biélorussie", "f": "🇧🇾", "cap": "Minsk", "big": "Minsk", "cur": "rouble biélorusse (BYN)", "note": "", "c": "Europe"}, {"n": "Birmanie (Myanmar)", "f": "🇲🇲", "cap": "Naypyidaw", "big": "Rangoun (Yangon)", "cur": "kyat (MMK)", "note": "Capitale transférée de Rangoun à Naypyidaw en 2005.", "c": "Asie"}, {"n": "Bolivie", "f": "🇧🇴", "cap": "Sucre (constitutionnelle), La Paz (siège du gouvernement)", "big": "Santa Cruz de la Sierra", "cur": "boliviano (BOB)", "note": "", "c": "Amérique du Sud"}, {"n": "Bosnie-Herzégovine", "f": "🇧🇦", "cap": "Sarajevo", "big": "Sarajevo", "cur": "mark convertible (BAM)", "note": "", "c": "Europe"}, {"n": "Botswana", "f": "🇧🇼", "cap": "Gaborone", "big": "Gaborone", "cur": "pula (BWP)", "note": "", "c": "Afrique"}, {"n": "Brésil", "f": "🇧🇷", "cap": "Brasilia", "big": "São Paulo", "cur": "réal (BRL)", "note": "Capitale transférée de Rio de Janeiro à Brasilia en 1960.", "c": "Amérique du Sud"}, {"n": "Brunei", "f": "🇧🇳", "cap": "Bandar Seri Begawan", "big": "Bandar Seri Begawan", "cur": "dollar de Brunei (BND)", "note": "Le dollar de Singapour est accepté à parité.", "c": "Asie"}, {"n": "Bulgarie", "f": "🇧🇬", "cap": "Sofia", "big": "Sofia", "cur": "euro (EUR)", "note": "La Bulgarie a adopté l'euro le 1er janvier 2026, en remplacement du lev.", "c": "Europe"}, {"n": "Burkina Faso", "f": "🇧🇫", "cap": "Ouagadougou", "big": "Ouagadougou", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Burundi", "f": "🇧🇮", "cap": "Gitega", "big": "Bujumbura", "cur": "franc burundais (BIF)", "note": "Capitale politique transférée à Gitega en 2019.", "c": "Afrique"}, {"n": "Cambodge", "f": "🇰🇭", "cap": "Phnom Penh", "big": "Phnom Penh", "cur": "riel (KHR)", "note": "Le dollar américain est largement utilisé.", "c": "Asie"}, {"n": "Cameroun", "f": "🇨🇲", "cap": "Yaoundé", "big": "Douala", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Canada", "f": "🇨🇦", "cap": "Ottawa", "big": "Toronto", "cur": "dollar canadien (CAD)", "note": "", "c": "Amérique du Nord"}, {"n": "Cap-Vert", "f": "🇨🇻", "cap": "Praia", "big": "Praia", "cur": "escudo cap-verdien (CVE)", "note": "", "c": "Afrique"}, {"n": "Chili", "f": "🇨🇱", "cap": "Santiago", "big": "Santiago", "cur": "peso chilien (CLP)", "note": "Valparaíso accueille le Congrès.", "c": "Amérique du Sud"}, {"n": "Chine", "f": "🇨🇳", "cap": "Pékin", "big": "Shanghai", "cur": "yuan renminbi (CNY)", "note": "", "c": "Asie"}, {"n": "Chypre", "f": "🇨🇾", "cap": "Nicosie", "big": "Nicosie", "cur": "euro (EUR)", "note": "Dernière capitale divisée du monde.", "c": "Europe"}, {"n": "Colombie", "f": "🇨🇴", "cap": "Bogota", "big": "Bogota", "cur": "peso colombien (COP)", "note": "", "c": "Amérique du Sud"}, {"n": "Comores", "f": "🇰🇲", "cap": "Moroni", "big": "Moroni", "cur": "franc comorien (KMF)", "note": "", "c": "Afrique"}, {"n": "Corée du Nord", "f": "🇰🇵", "cap": "Pyongyang", "big": "Pyongyang", "cur": "won nord-coréen (KPW)", "note": "", "c": "Asie"}, {"n": "Corée du Sud", "f": "🇰🇷", "cap": "Séoul", "big": "Séoul", "cur": "won sud-coréen (KRW)", "note": "Sejong est la capitale administrative de fait.", "c": "Asie"}, {"n": "Costa Rica", "f": "🇨🇷", "cap": "San José", "big": "San José", "cur": "colón (CRC)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Côte d'Ivoire", "f": "🇨🇮", "cap": "Yamoussoukro", "big": "Abidjan", "cur": "franc CFA (XOF)", "note": "Abidjan reste le siège du gouvernement.", "c": "Afrique"}, {"n": "Croatie", "f": "🇭🇷", "cap": "Zagreb", "big": "Zagreb", "cur": "euro (EUR)", "note": "La Croatie a adopté l'euro en 2023.", "c": "Europe"}, {"n": "Cuba", "f": "🇨🇺", "cap": "La Havane", "big": "La Havane", "cur": "peso cubain (CUP)", "note": "Le peso convertible (CUC) a été supprimé en 2021.", "c": "Amérique centrale et Caraïbes"}, {"n": "Danemark", "f": "🇩🇰", "cap": "Copenhague", "big": "Copenhague", "cur": "couronne danoise (DKK)", "note": "", "c": "Europe"}, {"n": "Djibouti", "f": "🇩🇯", "cap": "Djibouti", "big": "Djibouti", "cur": "franc de Djibouti (DJF)", "note": "", "c": "Afrique"}, {"n": "Dominique", "f": "🇩🇲", "cap": "Roseau", "big": "Roseau", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Égypte", "f": "🇪🇬", "cap": "Le Caire", "big": "Le Caire", "cur": "livre égyptienne (EGP)", "note": "Une nouvelle capitale administrative est en construction à l’est du Caire.", "c": "Afrique"}, {"n": "Émirats arabes unis", "f": "🇦🇪", "cap": "Abou Dabi", "big": "Dubaï", "cur": "dirham des Émirats (AED)", "note": "", "c": "Asie"}, {"n": "Équateur", "f": "🇪🇨", "cap": "Quito", "big": "Guayaquil", "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2000 ; Quito et Guayaquil sont très proches en population.", "c": "Amérique du Sud"}, {"n": "Érythrée", "f": "🇪🇷", "cap": "Asmara", "big": "Asmara", "cur": "nakfa (ERN)", "note": "", "c": "Afrique"}, {"n": "Espagne", "f": "🇪🇸", "cap": "Madrid", "big": "Madrid", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Estonie", "f": "🇪🇪", "cap": "Tallinn", "big": "Tallinn", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Eswatini", "f": "🇸🇿", "cap": "Mbabane (administrative), Lobamba (royale et législative)", "big": "Manzini", "cur": "lilangeni (SZL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "États-Unis", "f": "🇺🇸", "cap": "Washington", "big": "New York", "cur": "dollar américain (USD)", "note": "", "c": "Amérique du Nord"}, {"n": "Éthiopie", "f": "🇪🇹", "cap": "Addis-Abeba", "big": "Addis-Abeba", "cur": "birr (ETB)", "note": "Siège de l’Union africaine.", "c": "Afrique"}, {"n": "Fidji", "f": "🇫🇯", "cap": "Suva", "big": "Suva", "cur": "dollar fidjien (FJD)", "note": "", "c": "Océanie"}, {"n": "Finlande", "f": "🇫🇮", "cap": "Helsinki", "big": "Helsinki", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "France", "f": "🇫🇷", "cap": "Paris", "big": "Paris", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Gabon", "f": "🇬🇦", "cap": "Libreville", "big": "Libreville", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Gambie", "f": "🇬🇲", "cap": "Banjul", "big": "Serekunda", "cur": "dalasi (GMD)", "note": "Serekunda dépasse largement Banjul en population.", "c": "Afrique"}, {"n": "Géorgie", "f": "🇬🇪", "cap": "Tbilissi", "big": "Tbilissi", "cur": "lari (GEL)", "note": "", "c": "Asie"}, {"n": "Ghana", "f": "🇬🇭", "cap": "Accra", "big": "Accra", "cur": "cedi (GHS)", "note": "", "c": "Afrique"}, {"n": "Grèce", "f": "🇬🇷", "cap": "Athènes", "big": "Athènes", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Grenade", "f": "🇬🇩", "cap": "Saint-Georges", "big": "Saint-Georges", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guatemala", "f": "🇬🇹", "cap": "Guatemala", "big": "Guatemala", "cur": "quetzal (GTQ)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guinée", "f": "🇬🇳", "cap": "Conakry", "big": "Conakry", "cur": "franc guinéen (GNF)", "note": "", "c": "Afrique"}, {"n": "Guinée équatoriale", "f": "🇬🇶", "cap": "Malabo", "big": "Bata", "cur": "franc CFA (XAF)", "note": "Une nouvelle capitale, Ciudad de la Paz (Oyala), est en construction.", "c": "Afrique"}, {"n": "Guinée-Bissau", "f": "🇬🇼", "cap": "Bissau", "big": "Bissau", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Guyana", "f": "🇬🇾", "cap": "Georgetown", "big": "Georgetown", "cur": "dollar guyanien (GYD)", "note": "", "c": "Amérique du Sud"}, {"n": "Haïti", "f": "🇭🇹", "cap": "Port-au-Prince", "big": "Port-au-Prince", "cur": "gourde (HTG)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Honduras", "f": "🇭🇳", "cap": "Tegucigalpa", "big": "Tegucigalpa", "cur": "lempira (HNL)", "note": "San Pedro Sula est la capitale économique.", "c": "Amérique centrale et Caraïbes"}, {"n": "Hongrie", "f": "🇭🇺", "cap": "Budapest", "big": "Budapest", "cur": "forint (HUF)", "note": "", "c": "Europe"}, {"n": "Îles Marshall", "f": "🇲🇭", "cap": "Majuro", "big": "Majuro", "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Îles Salomon", "f": "🇸🇧", "cap": "Honiara", "big": "Honiara", "cur": "dollar des Salomon (SBD)", "note": "", "c": "Océanie"}, {"n": "Inde", "f": "🇮🇳", "cap": "New Delhi", "big": "Delhi", "cur": "roupie indienne (INR)", "note": "New Delhi est un district de l'agglomération de Delhi. Mumbai est la plus grande ville au sens municipal, Delhi la plus grande agglomération.", "c": "Asie"}, {"n": "Indonésie", "f": "🇮🇩", "cap": "Jakarta", "big": "Jakarta", "cur": "roupie indonésienne (IDR)", "note": "Nusantara doit devenir la capitale politique ; en 2026, Jakarta conserve le statut de capitale.", "c": "Asie"}, {"n": "Irak", "f": "🇮🇶", "cap": "Bagdad", "big": "Bagdad", "cur": "dinar irakien (IQD)", "note": "", "c": "Asie"}, {"n": "Iran", "f": "🇮🇷", "cap": "Téhéran", "big": "Téhéran", "cur": "rial iranien (IRR)", "note": "", "c": "Asie"}, {"n": "Irlande", "f": "🇮🇪", "cap": "Dublin", "big": "Dublin", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Islande", "f": "🇮🇸", "cap": "Reykjavik", "big": "Reykjavik", "cur": "couronne islandaise (ISK)", "note": "", "c": "Europe"}, {"n": "Israël", "f": "🇮🇱", "cap": "Jérusalem", "big": "Tel Aviv-Jaffa", "cur": "nouveau shekel (ILS)", "note": "Statut de Jérusalem contesté ; la plupart des ambassades sont à Tel Aviv. Jérusalem est la plus grande commune, l'agglomération de Tel Aviv (Gush Dan) la plus peuplée.", "c": "Asie"}, {"n": "Italie", "f": "🇮🇹", "cap": "Rome", "big": "Rome", "cur": "euro (EUR)", "note": "Selon la définition d'agglomération retenue, Milan peut dépasser Rome.", "c": "Europe"}, {"n": "Jamaïque", "f": "🇯🇲", "cap": "Kingston", "big": "Kingston", "cur": "dollar jamaïcain (JMD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Japon", "f": "🇯🇵", "cap": "Tokyo", "big": "Tokyo", "cur": "yen (JPY)", "note": "Plus grande agglomération du monde.", "c": "Asie"}, {"n": "Jordanie", "f": "🇯🇴", "cap": "Amman", "big": "Amman", "cur": "dinar jordanien (JOD)", "note": "", "c": "Asie"}, {"n": "Kazakhstan", "f": "🇰🇿", "cap": "Astana", "big": "Almaty", "cur": "tenge (KZT)", "note": "Capitale transférée d’Almaty à Astana en 1997.", "c": "Asie"}, {"n": "Kenya", "f": "🇰🇪", "cap": "Nairobi", "big": "Nairobi", "cur": "shilling kényan (KES)", "note": "", "c": "Afrique"}, {"n": "Kirghizistan", "f": "🇰🇬", "cap": "Bichkek", "big": "Bichkek", "cur": "som (KGS)", "note": "", "c": "Asie"}, {"n": "Kiribati", "f": "🇰🇮", "cap": "Tarawa-Sud", "big": "Tarawa-Sud", "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Koweït", "f": "🇰🇼", "cap": "Koweït", "big": "Koweït", "cur": "dinar koweïtien (KWD)", "note": "La monnaie ayant la plus forte valeur faciale du monde.", "c": "Asie"}, {"n": "Laos", "f": "🇱🇦", "cap": "Vientiane", "big": "Vientiane", "cur": "kip (LAK)", "note": "", "c": "Asie"}, {"n": "Lesotho", "f": "🇱🇸", "cap": "Maseru", "big": "Maseru", "cur": "loti (LSL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Lettonie", "f": "🇱🇻", "cap": "Riga", "big": "Riga", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Liban", "f": "🇱🇧", "cap": "Beyrouth", "big": "Beyrouth", "cur": "livre libanaise (LBP)", "note": "", "c": "Asie"}, {"n": "Liberia", "f": "🇱🇷", "cap": "Monrovia", "big": "Monrovia", "cur": "dollar libérien (LRD)", "note": "", "c": "Afrique"}, {"n": "Libye", "f": "🇱🇾", "cap": "Tripoli", "big": "Tripoli", "cur": "dinar libyen (LYD)", "note": "", "c": "Afrique"}, {"n": "Liechtenstein", "f": "🇱🇮", "cap": "Vaduz", "big": "Schaan", "cur": "franc suisse (CHF)", "note": "", "c": "Europe"}, {"n": "Lituanie", "f": "🇱🇹", "cap": "Vilnius", "big": "Vilnius", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Luxembourg", "f": "🇱🇺", "cap": "Luxembourg", "big": "Luxembourg", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Macédoine du Nord", "f": "🇲🇰", "cap": "Skopje", "big": "Skopje", "cur": "denar (MKD)", "note": "", "c": "Europe"}, {"n": "Madagascar", "f": "🇲🇬", "cap": "Antananarivo", "big": "Antananarivo", "cur": "ariary (MGA)", "note": "", "c": "Afrique"}, {"n": "Malaisie", "f": "🇲🇾", "cap": "Kuala Lumpur", "big": "Kuala Lumpur", "cur": "ringgit (MYR)", "note": "Putrajaya est la capitale administrative.", "c": "Asie"}, {"n": "Malawi", "f": "🇲🇼", "cap": "Lilongwe", "big": "Lilongwe", "cur": "kwacha malawien (MWK)", "note": "Blantyre est la capitale économique.", "c": "Afrique"}, {"n": "Maldives", "f": "🇲🇻", "cap": "Malé", "big": "Malé", "cur": "rufiyaa (MVR)", "note": "", "c": "Asie"}, {"n": "Mali", "f": "🇲🇱", "cap": "Bamako", "big": "Bamako", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Malte", "f": "🇲🇹", "cap": "La Valette", "big": "La Valette", "cur": "euro (EUR)", "note": "La Valette ne compte que quelques milliers d’habitants ; Birkirkara est la plus grande commune.", "c": "Europe"}, {"n": "Maroc", "f": "🇲🇦", "cap": "Rabat", "big": "Casablanca", "cur": "dirham marocain (MAD)", "note": "", "c": "Afrique"}, {"n": "Maurice", "f": "🇲🇺", "cap": "Port-Louis", "big": "Port-Louis", "cur": "roupie mauricienne (MUR)", "note": "", "c": "Afrique"}, {"n": "Mauritanie", "f": "🇲🇷", "cap": "Nouakchott", "big": "Nouakchott", "cur": "ouguiya (MRU)", "note": "", "c": "Afrique"}, {"n": "Mexique", "f": "🇲🇽", "cap": "Mexico", "big": "Mexico", "cur": "peso mexicain (MXN)", "note": "", "c": "Amérique du Nord"}, {"n": "Micronésie", "f": "🇫🇲", "cap": "Palikir", "big": "Weno", "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Moldavie", "f": "🇲🇩", "cap": "Chisinau", "big": "Chisinau", "cur": "leu moldave (MDL)", "note": "", "c": "Europe"}, {"n": "Monaco", "f": "🇲🇨", "cap": "Monaco", "big": "Monaco", "cur": "euro (EUR)", "note": "Cité-État ; Monte-Carlo est un quartier, pas la capitale.", "c": "Europe"}, {"n": "Mongolie", "f": "🇲🇳", "cap": "Oulan-Bator", "big": "Oulan-Bator", "cur": "tugrik (MNT)", "note": "Capitale la plus froide du monde.", "c": "Asie"}, {"n": "Monténégro", "f": "🇲🇪", "cap": "Podgorica", "big": "Podgorica", "cur": "euro (EUR)", "note": "Le Monténégro utilise l'euro unilatéralement.", "c": "Europe"}, {"n": "Mozambique", "f": "🇲🇿", "cap": "Maputo", "big": "Maputo", "cur": "metical (MZN)", "note": "Matola, dans l’agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Namibie", "f": "🇳🇦", "cap": "Windhoek", "big": "Windhoek", "cur": "dollar namibien (NAD)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Nauru", "f": "🇳🇷", "cap": "Yaren (de facto)", "big": "Yaren", "cur": "dollar australien (AUD)", "note": "Nauru n’a pas de capitale officielle.", "c": "Océanie"}, {"n": "Népal", "f": "🇳🇵", "cap": "Katmandou", "big": "Katmandou", "cur": "roupie népalaise (NPR)", "note": "", "c": "Asie"}, {"n": "Nicaragua", "f": "🇳🇮", "cap": "Managua", "big": "Managua", "cur": "córdoba (NIO)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Niger", "f": "🇳🇪", "cap": "Niamey", "big": "Niamey", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Nigéria", "f": "🇳🇬", "cap": "Abuja", "big": "Lagos", "cur": "naira (NGN)", "note": "Capitale transférée de Lagos à Abuja en 1991.", "c": "Afrique"}, {"n": "Norvège", "f": "🇳🇴", "cap": "Oslo", "big": "Oslo", "cur": "couronne norvégienne (NOK)", "note": "", "c": "Europe"}, {"n": "Nouvelle-Zélande", "f": "🇳🇿", "cap": "Wellington", "big": "Auckland", "cur": "dollar néo-zélandais (NZD)", "note": "", "c": "Océanie"}, {"n": "Oman", "f": "🇴🇲", "cap": "Mascate", "big": "Mascate", "cur": "rial omanais (OMR)", "note": "", "c": "Asie"}, {"n": "Ouganda", "f": "🇺🇬", "cap": "Kampala", "big": "Kampala", "cur": "shilling ougandais (UGX)", "note": "", "c": "Afrique"}, {"n": "Ouzbékistan", "f": "🇺🇿", "cap": "Tachkent", "big": "Tachkent", "cur": "sum (UZS)", "note": "", "c": "Asie"}, {"n": "Pakistan", "f": "🇵🇰", "cap": "Islamabad", "big": "Karachi", "cur": "roupie pakistanaise (PKR)", "note": "Capitale transférée de Karachi à Islamabad en 1967.", "c": "Asie"}, {"n": "Palaos", "f": "🇵🇼", "cap": "Ngerulmud", "big": "Koror", "cur": "dollar américain (USD)", "note": "Ngerulmud est la plus petite capitale du monde par la population.", "c": "Océanie"}, {"n": "Palestine", "f": "🇵🇸", "cap": "Jérusalem-Est (revendiquée), Ramallah (siège de l’Autorité)", "big": "Gaza", "cur": "nouveau shekel (ILS), dinar jordanien (JOD)", "note": "Statut contesté ; plusieurs monnaies circulent.", "c": "Asie"}, {"n": "Panama", "f": "🇵🇦", "cap": "Panama", "big": "Panama", "cur": "balboa (PAB) et dollar américain (USD)", "note": "Le balboa est à parité avec le dollar ; seules des pièces sont émises.", "c": "Amérique centrale et Caraïbes"}, {"n": "Papouasie-Nouvelle-Guinée", "f": "🇵🇬", "cap": "Port Moresby", "big": "Port Moresby", "cur": "kina (PGK)", "note": "", "c": "Océanie"}, {"n": "Paraguay", "f": "🇵🇾", "cap": "Asuncion", "big": "Asuncion", "cur": "guarani (PYG)", "note": "", "c": "Amérique du Sud"}, {"n": "Pays-Bas", "f": "🇳🇱", "cap": "Amsterdam", "big": "Amsterdam", "cur": "euro (EUR)", "note": "La Haye est le siège du gouvernement.", "c": "Europe"}, {"n": "Pérou", "f": "🇵🇪", "cap": "Lima", "big": "Lima", "cur": "sol (PEN)", "note": "", "c": "Amérique du Sud"}, {"n": "Philippines", "f": "🇵🇭", "cap": "Manille", "big": "Manille", "cur": "peso philippin (PHP)", "note": "Quezon City est la plus grande commune ; l’agglomération de Manille est la plus peuplée.", "c": "Asie"}, {"n": "Pologne", "f": "🇵🇱", "cap": "Varsovie", "big": "Varsovie", "cur": "zloty (PLN)", "note": "", "c": "Europe"}, {"n": "Portugal", "f": "🇵🇹", "cap": "Lisbonne", "big": "Lisbonne", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Qatar", "f": "🇶🇦", "cap": "Doha", "big": "Doha", "cur": "riyal qatari (QAR)", "note": "", "c": "Asie"}, {"n": "République centrafricaine", "f": "🇨🇫", "cap": "Bangui", "big": "Bangui", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "République démocratique du Congo", "f": "🇨🇩", "cap": "Kinshasa", "big": "Kinshasa", "cur": "franc congolais (CDF)", "note": "Kinshasa est la plus grande ville francophone du monde.", "c": "Afrique"}, {"n": "République dominicaine", "f": "🇩🇴", "cap": "Saint-Domingue", "big": "Saint-Domingue", "cur": "peso dominicain (DOP)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "République du Congo", "f": "🇨🇬", "cap": "Brazzaville", "big": "Brazzaville", "cur": "franc CFA (XAF)", "note": "Pointe-Noire est la capitale économique.", "c": "Afrique"}, {"n": "Roumanie", "f": "🇷🇴", "cap": "Bucarest", "big": "Bucarest", "cur": "leu roumain (RON)", "note": "", "c": "Europe"}, {"n": "Royaume-Uni", "f": "🇬🇧", "cap": "Londres", "big": "Londres", "cur": "livre sterling (GBP)", "note": "", "c": "Europe"}, {"n": "Russie", "f": "🇷🇺", "cap": "Moscou", "big": "Moscou", "cur": "rouble (RUB)", "note": "Plus grande ville d’Europe.", "c": "Europe"}, {"n": "Rwanda", "f": "🇷🇼", "cap": "Kigali", "big": "Kigali", "cur": "franc rwandais (RWF)", "note": "", "c": "Afrique"}, {"n": "Saint-Christophe-et-Niévès", "f": "🇰🇳", "cap": "Basseterre", "big": "Basseterre", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Saint-Marin", "f": "🇸🇲", "cap": "Saint-Marin", "big": "Dogana", "cur": "euro (EUR)", "note": "Dogana, dans la commune de Serravalle, est la plus grande localité.", "c": "Europe"}, {"n": "Saint-Vincent-et-les-Grenadines", "f": "🇻🇨", "cap": "Kingstown", "big": "Kingstown", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Sainte-Lucie", "f": "🇱🇨", "cap": "Castries", "big": "Castries", "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Salvador", "f": "🇸🇻", "cap": "San Salvador", "big": "San Salvador", "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2001.", "c": "Amérique centrale et Caraïbes"}, {"n": "Samoa", "f": "🇼🇸", "cap": "Apia", "big": "Apia", "cur": "tala (WST)", "note": "", "c": "Océanie"}, {"n": "São Tomé et Príncipe", "f": "🇸🇹", "cap": "São Tomé", "big": "São Tomé", "cur": "dobra (STN)", "note": "", "c": "Afrique"}, {"n": "Sénégal", "f": "🇸🇳", "cap": "Dakar", "big": "Dakar", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Serbie", "f": "🇷🇸", "cap": "Belgrade", "big": "Belgrade", "cur": "dinar serbe (RSD)", "note": "", "c": "Europe"}, {"n": "Seychelles", "f": "🇸🇨", "cap": "Victoria", "big": "Victoria", "cur": "roupie seychelloise (SCR)", "note": "", "c": "Afrique"}, {"n": "Sierra Leone", "f": "🇸🇱", "cap": "Freetown", "big": "Freetown", "cur": "leone (SLE)", "note": "Le leone a été redénominé en 2022 (mille anciens leones = un nouveau).", "c": "Afrique"}, {"n": "Singapour", "f": "🇸🇬", "cap": "Singapour", "big": "Singapour", "cur": "dollar de Singapour (SGD)", "note": "Cité-État.", "c": "Asie"}, {"n": "Slovaquie", "f": "🇸🇰", "cap": "Bratislava", "big": "Bratislava", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Slovénie", "f": "🇸🇮", "cap": "Ljubljana", "big": "Ljubljana", "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Somalie", "f": "🇸🇴", "cap": "Mogadiscio", "big": "Mogadiscio", "cur": "shilling somalien (SOS)", "note": "", "c": "Afrique"}, {"n": "Soudan", "f": "🇸🇩", "cap": "Khartoum", "big": "Khartoum", "cur": "livre soudanaise (SDG)", "note": "Omdourman, dans la même agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Soudan du Sud", "f": "🇸🇸", "cap": "Djouba", "big": "Djouba", "cur": "livre sud-soudanaise (SSP)", "note": "", "c": "Afrique"}, {"n": "Sri Lanka", "f": "🇱🇰", "cap": "Sri Jayawardenepura Kotte", "big": "Colombo", "cur": "roupie srilankaise (LKR)", "note": "Colombo est la capitale économique et la plus grande ville.", "c": "Asie"}, {"n": "Suède", "f": "🇸🇪", "cap": "Stockholm", "big": "Stockholm", "cur": "couronne suédoise (SEK)", "note": "", "c": "Europe"}, {"n": "Suisse", "f": "🇨🇭", "cap": "Berne", "big": "Zurich", "cur": "franc suisse (CHF)", "note": "Berne est officiellement « ville fédérale ».", "c": "Europe"}, {"n": "Suriname", "f": "🇸🇷", "cap": "Paramaribo", "big": "Paramaribo", "cur": "dollar surinamais (SRD)", "note": "", "c": "Amérique du Sud"}, {"n": "Syrie", "f": "🇸🇾", "cap": "Damas", "big": "Damas", "cur": "livre syrienne (SYP)", "note": "Alep, longtemps la plus grande ville, a été dépassée par Damas.", "c": "Asie"}, {"n": "Tadjikistan", "f": "🇹🇯", "cap": "Douchanbé", "big": "Douchanbé", "cur": "somoni (TJS)", "note": "", "c": "Asie"}, {"n": "Tanzanie", "f": "🇹🇿", "cap": "Dodoma", "big": "Dar es Salaam", "cur": "shilling tanzanien (TZS)", "note": "Capitale transférée de Dar es Salaam à Dodoma (officielle depuis 1996).", "c": "Afrique"}, {"n": "Tchad", "f": "🇹🇩", "cap": "N’Djaména", "big": "N’Djaména", "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Tchéquie", "f": "🇨🇿", "cap": "Prague", "big": "Prague", "cur": "couronne tchèque (CZK)", "note": "", "c": "Europe"}, {"n": "Thaïlande", "f": "🇹🇭", "cap": "Bangkok", "big": "Bangkok", "cur": "baht (THB)", "note": "", "c": "Asie"}, {"n": "Timor oriental", "f": "🇹🇱", "cap": "Dili", "big": "Dili", "cur": "dollar américain (USD)", "note": "", "c": "Asie"}, {"n": "Togo", "f": "🇹🇬", "cap": "Lomé", "big": "Lomé", "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Tonga", "f": "🇹🇴", "cap": "Nukuʻalofa", "big": "Nukuʻalofa", "cur": "pa’anga (TOP)", "note": "", "c": "Océanie"}, {"n": "Trinité-et-Tobago", "f": "🇹🇹", "cap": "Port-d’Espagne", "big": "Port-d’Espagne", "cur": "dollar de Trinité-et-Tobago (TTD)", "note": "Chaguanas est la plus grande commune.", "c": "Amérique centrale et Caraïbes"}, {"n": "Tunisie", "f": "🇹🇳", "cap": "Tunis", "big": "Tunis", "cur": "dinar tunisien (TND)", "note": "", "c": "Afrique"}, {"n": "Turkménistan", "f": "🇹🇲", "cap": "Achgabat", "big": "Achgabat", "cur": "manat turkmène (TMT)", "note": "", "c": "Asie"}, {"n": "Turquie", "f": "🇹🇷", "cap": "Ankara", "big": "Istanbul", "cur": "livre turque (TRY)", "note": "Capitale transférée d’Istanbul à Ankara en 1923.", "c": "Asie"}, {"n": "Tuvalu", "f": "🇹🇻", "cap": "Funafuti", "big": "Funafuti", "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Ukraine", "f": "🇺🇦", "cap": "Kyiv", "big": "Kyiv", "cur": "hryvnia (UAH)", "note": "", "c": "Europe"}, {"n": "Uruguay", "f": "🇺🇾", "cap": "Montevideo", "big": "Montevideo", "cur": "peso uruguayen (UYU)", "note": "", "c": "Amérique du Sud"}, {"n": "Vanuatu", "f": "🇻🇺", "cap": "Port-Vila", "big": "Port-Vila", "cur": "vatu (VUV)", "note": "", "c": "Océanie"}, {"n": "Vatican", "f": "🇻🇦", "cap": "Cité du Vatican", "big": "Cité du Vatican", "cur": "euro (EUR)", "note": "État le moins peuplé du monde.", "c": "Europe"}, {"n": "Venezuela", "f": "🇻🇪", "cap": "Caracas", "big": "Caracas", "cur": "bolívar (VES)", "note": "", "c": "Amérique du Sud"}, {"n": "Viêt Nam", "f": "🇻🇳", "cap": "Hanoï", "big": "Hô Chi Minh-Ville", "cur": "dông (VND)", "note": "Hô Chi Minh-Ville s’appelait Saïgon.", "c": "Asie"}, {"n": "Yémen", "f": "🇾🇪", "cap": "Sanaa", "big": "Sanaa", "cur": "rial yéménite (YER)", "note": "", "c": "Asie"}, {"n": "Zambie", "f": "🇿🇲", "cap": "Lusaka", "big": "Lusaka", "cur": "kwacha zambien (ZMW)", "note": "", "c": "Afrique"}, {"n": "Zimbabwe", "f": "🇿🇼", "cap": "Harare", "big": "Harare", "cur": "ZiG – Zimbabwe Gold (ZWG) et dollar américain (USD)", "note": "Le ZiG, adossé à l’or, a remplacé le dollar zimbabwéen en 2024.", "c": "Afrique"}];
+const DATA = [{"n": "Afghanistan", "f": "🇦🇫", "cap": "Kaboul", "cc": [35, 69], "big": "Kaboul", "bc": [35, 69], "cur": "afghani (AFN)", "note": "", "c": "Asie"}, {"n": "Afrique du Sud", "f": "🇿🇦", "cap": "Pretoria (exécutif), Le Cap (législatif), Bloemfontein (judiciaire)", "cc": [-26, 28], "big": "Johannesburg", "bc": [-26, 28], "cur": "rand (ZAR)", "note": "Seul pays à avoir trois capitales.", "c": "Afrique"}, {"n": "Albanie", "f": "🇦🇱", "cap": "Tirana", "cc": [41, 20], "big": "Tirana", "bc": [41, 20], "cur": "lek (ALL)", "note": "", "c": "Europe"}, {"n": "Algérie", "f": "🇩🇿", "cap": "Alger", "cc": [37, 3], "big": "Alger", "bc": [37, 3], "cur": "dinar algérien (DZD)", "note": "", "c": "Afrique"}, {"n": "Allemagne", "f": "🇩🇪", "cap": "Berlin", "cc": [53, 13], "big": "Berlin", "bc": [53, 13], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Andorre", "f": "🇦🇩", "cap": "Andorre-la-Vieille", "cc": [43, 2], "big": "Andorre-la-Vieille", "bc": [43, 2], "cur": "euro (EUR)", "note": "L'Andorre utilise l'euro sans appartenir à l'UE.", "c": "Europe"}, {"n": "Angola", "f": "🇦🇴", "cap": "Luanda", "cc": [-9, 13], "big": "Luanda", "bc": [-9, 13], "cur": "kwanza (AOA)", "note": "", "c": "Afrique"}, {"n": "Antigua-et-Barbuda", "f": "🇦🇬", "cap": "Saint John's", "cc": [17, -62], "big": "Saint John's", "bc": [17, -62], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Arabie Saoudite", "f": "🇸🇦", "cap": "Riyad", "cc": [25, 47], "big": "Riyad", "bc": [25, 47], "cur": "riyal saoudien (SAR)", "note": "", "c": "Asie"}, {"n": "Argentine", "f": "🇦🇷", "cap": "Buenos Aires", "cc": [-35, -58], "big": "Buenos Aires", "bc": [-35, -58], "cur": "peso argentin (ARS)", "note": "", "c": "Amérique du Sud"}, {"n": "Arménie", "f": "🇦🇲", "cap": "Erevan", "cc": [40, 45], "big": "Erevan", "bc": [40, 45], "cur": "dram (AMD)", "note": "", "c": "Asie"}, {"n": "Australie", "f": "🇦🇺", "cap": "Canberra", "cc": [-35, 149], "big": "Sydney", "bc": [-34, 151], "cur": "dollar australien (AUD)", "note": "Sydney et Melbourne sont au coude à coude : selon le découpage retenu par l'office statistique australien, Melbourne est passée en tête certaines années.", "c": "Océanie"}, {"n": "Autriche", "f": "🇦🇹", "cap": "Vienne", "cc": [48, 16], "big": "Vienne", "bc": [48, 16], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Azerbaïdjan", "f": "🇦🇿", "cap": "Bakou", "cc": [40, 50], "big": "Bakou", "bc": [40, 50], "cur": "manat azerbaïdjanais (AZN)", "note": "", "c": "Asie"}, {"n": "Bahamas", "f": "🇧🇸", "cap": "Nassau", "cc": [25, -77], "big": "Nassau", "bc": [25, -77], "cur": "dollar bahaméen (BSD)", "note": "Le dollar américain circule à parité.", "c": "Amérique centrale et Caraïbes"}, {"n": "Bahreïn", "f": "🇧🇭", "cap": "Manama", "cc": [26, 51], "big": "Manama", "bc": [26, 51], "cur": "dinar bahreïni (BHD)", "note": "", "c": "Asie"}, {"n": "Bangladesh", "f": "🇧🇩", "cap": "Dacca", "cc": [24, 90], "big": "Dacca", "bc": [24, 90], "cur": "taka (BDT)", "note": "", "c": "Asie"}, {"n": "Barbade", "f": "🇧🇧", "cap": "Bridgetown", "cc": [13, -60], "big": "Bridgetown", "bc": [13, -60], "cur": "dollar barbadien (BBD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Belgique", "f": "🇧🇪", "cap": "Bruxelles", "cc": [51, 4], "big": "Bruxelles", "bc": [51, 4], "cur": "euro (EUR)", "note": "Anvers est la plus grande commune ; l'agglomération bruxelloise reste la plus peuplée.", "c": "Europe"}, {"n": "Belize", "f": "🇧🇿", "cap": "Belmopan", "cc": [17, -89], "big": "Belize City", "bc": [17, -88], "cur": "dollar bélizien (BZD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Bénin", "f": "🇧🇯", "cap": "Porto-Novo", "cc": [6, 3], "big": "Cotonou", "bc": [6, 2], "cur": "franc CFA (XOF)", "note": "Cotonou est le siège du gouvernement.", "c": "Afrique"}, {"n": "Bhoutan", "f": "🇧🇹", "cap": "Thimphou", "cc": [27, 90], "big": "Thimphou", "bc": [27, 90], "cur": "ngultrum (BTN)", "note": "La roupie indienne circule à parité.", "c": "Asie"}, {"n": "Biélorussie", "f": "🇧🇾", "cap": "Minsk", "cc": [54, 28], "big": "Minsk", "bc": [54, 28], "cur": "rouble biélorusse (BYN)", "note": "", "c": "Europe"}, {"n": "Birmanie (Myanmar)", "f": "🇲🇲", "cap": "Naypyidaw", "cc": [20, 96], "big": "Rangoun (Yangon)", "bc": [17, 96], "cur": "kyat (MMK)", "note": "Capitale transférée de Rangoun à Naypyidaw en 2005.", "c": "Asie"}, {"n": "Bolivie", "f": "🇧🇴", "cap": "Sucre (constitutionnelle), La Paz (siège du gouvernement)", "cc": [-19, -65], "big": "Santa Cruz de la Sierra", "bc": [-18, -63], "cur": "boliviano (BOB)", "note": "", "c": "Amérique du Sud"}, {"n": "Bosnie-Herzégovine", "f": "🇧🇦", "cap": "Sarajevo", "cc": [44, 18], "big": "Sarajevo", "bc": [44, 18], "cur": "mark convertible (BAM)", "note": "", "c": "Europe"}, {"n": "Botswana", "f": "🇧🇼", "cap": "Gaborone", "cc": [-25, 26], "big": "Gaborone", "bc": [-25, 26], "cur": "pula (BWP)", "note": "", "c": "Afrique"}, {"n": "Brésil", "f": "🇧🇷", "cap": "Brasilia", "cc": [-16, -48], "big": "São Paulo", "bc": [-24, -47], "cur": "réal (BRL)", "note": "Capitale transférée de Rio de Janeiro à Brasilia en 1960.", "c": "Amérique du Sud"}, {"n": "Brunei", "f": "🇧🇳", "cap": "Bandar Seri Begawan", "cc": [5, 115], "big": "Bandar Seri Begawan", "bc": [5, 115], "cur": "dollar de Brunei (BND)", "note": "Le dollar de Singapour est accepté à parité.", "c": "Asie"}, {"n": "Bulgarie", "f": "🇧🇬", "cap": "Sofia", "cc": [43, 23], "big": "Sofia", "bc": [43, 23], "cur": "euro (EUR)", "note": "La Bulgarie a adopté l'euro le 1er janvier 2026, en remplacement du lev.", "c": "Europe"}, {"n": "Burkina Faso", "f": "🇧🇫", "cap": "Ouagadougou", "cc": [12, -2], "big": "Ouagadougou", "bc": [12, -2], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Burundi", "f": "🇧🇮", "cap": "Gitega", "cc": [-3, 30], "big": "Bujumbura", "bc": [-3, 29], "cur": "franc burundais (BIF)", "note": "Capitale politique transférée à Gitega en 2019.", "c": "Afrique"}, {"n": "Cambodge", "f": "🇰🇭", "cap": "Phnom Penh", "cc": [12, 105], "big": "Phnom Penh", "bc": [12, 105], "cur": "riel (KHR)", "note": "Le dollar américain est largement utilisé.", "c": "Asie"}, {"n": "Cameroun", "f": "🇨🇲", "cap": "Yaoundé", "cc": [4, 12], "big": "Douala", "bc": [4, 10], "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Canada", "f": "🇨🇦", "cap": "Ottawa", "cc": [45, -76], "big": "Toronto", "bc": [44, -79], "cur": "dollar canadien (CAD)", "note": "", "c": "Amérique du Nord"}, {"n": "Cap-Vert", "f": "🇨🇻", "cap": "Praia", "cc": [15, -24], "big": "Praia", "bc": [15, -24], "cur": "escudo cap-verdien (CVE)", "note": "", "c": "Afrique"}, {"n": "Chili", "f": "🇨🇱", "cap": "Santiago", "cc": [-33, -71], "big": "Santiago", "bc": [-33, -71], "cur": "peso chilien (CLP)", "note": "Valparaíso accueille le Congrès.", "c": "Amérique du Sud"}, {"n": "Chine", "f": "🇨🇳", "cap": "Pékin", "cc": [40, 116], "big": "Shanghai", "bc": [31, 121], "cur": "yuan renminbi (CNY)", "note": "", "c": "Asie"}, {"n": "Chypre", "f": "🇨🇾", "cap": "Nicosie", "cc": [35, 33], "big": "Nicosie", "bc": [35, 33], "cur": "euro (EUR)", "note": "Dernière capitale divisée du monde.", "c": "Europe"}, {"n": "Colombie", "f": "🇨🇴", "cap": "Bogota", "cc": [5, -74], "big": "Bogota", "bc": [5, -74], "cur": "peso colombien (COP)", "note": "", "c": "Amérique du Sud"}, {"n": "Comores", "f": "🇰🇲", "cap": "Moroni", "cc": [-12, 43], "big": "Moroni", "bc": [-12, 43], "cur": "franc comorien (KMF)", "note": "", "c": "Afrique"}, {"n": "Corée du Nord", "f": "🇰🇵", "cap": "Pyongyang", "cc": [39, 126], "big": "Pyongyang", "bc": [39, 126], "cur": "won nord-coréen (KPW)", "note": "", "c": "Asie"}, {"n": "Corée du Sud", "f": "🇰🇷", "cap": "Séoul", "cc": [38, 127], "big": "Séoul", "bc": [38, 127], "cur": "won sud-coréen (KRW)", "note": "Sejong est la capitale administrative de fait.", "c": "Asie"}, {"n": "Costa Rica", "f": "🇨🇷", "cap": "San José", "cc": [10, -84], "big": "San José", "bc": [10, -84], "cur": "colón (CRC)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Côte d'Ivoire", "f": "🇨🇮", "cap": "Yamoussoukro", "cc": [7, -5], "big": "Abidjan", "bc": [5, -4], "cur": "franc CFA (XOF)", "note": "Abidjan reste le siège du gouvernement.", "c": "Afrique"}, {"n": "Croatie", "f": "🇭🇷", "cap": "Zagreb", "cc": [46, 16], "big": "Zagreb", "bc": [46, 16], "cur": "euro (EUR)", "note": "La Croatie a adopté l'euro en 2023.", "c": "Europe"}, {"n": "Cuba", "f": "🇨🇺", "cap": "La Havane", "cc": [23, -82], "big": "La Havane", "bc": [23, -82], "cur": "peso cubain (CUP)", "note": "Le peso convertible (CUC) a été supprimé en 2021.", "c": "Amérique centrale et Caraïbes"}, {"n": "Danemark", "f": "🇩🇰", "cap": "Copenhague", "cc": [56, 13], "big": "Copenhague", "bc": [56, 13], "cur": "couronne danoise (DKK)", "note": "", "c": "Europe"}, {"n": "Djibouti", "f": "🇩🇯", "cap": "Djibouti", "cc": [12, 43], "big": "Djibouti", "bc": [12, 43], "cur": "franc de Djibouti (DJF)", "note": "", "c": "Afrique"}, {"n": "Dominique", "f": "🇩🇲", "cap": "Roseau", "cc": [15, -61], "big": "Roseau", "bc": [15, -61], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Égypte", "f": "🇪🇬", "cap": "Le Caire", "cc": [30, 31], "big": "Le Caire", "bc": [30, 31], "cur": "livre égyptienne (EGP)", "note": "Une nouvelle capitale administrative est en construction à l’est du Caire.", "c": "Afrique"}, {"n": "Émirats arabes unis", "f": "🇦🇪", "cap": "Abou Dabi", "cc": [24, 54], "big": "Dubaï", "bc": [25, 55], "cur": "dirham des Émirats (AED)", "note": "", "c": "Asie"}, {"n": "Équateur", "f": "🇪🇨", "cap": "Quito", "cc": [0, -79], "big": "Guayaquil", "bc": [-2, -80], "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2000 ; Quito et Guayaquil sont très proches en population.", "c": "Amérique du Sud"}, {"n": "Érythrée", "f": "🇪🇷", "cap": "Asmara", "cc": [15, 39], "big": "Asmara", "bc": [15, 39], "cur": "nakfa (ERN)", "note": "", "c": "Afrique"}, {"n": "Espagne", "f": "🇪🇸", "cap": "Madrid", "cc": [40, -4], "big": "Madrid", "bc": [40, -4], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Estonie", "f": "🇪🇪", "cap": "Tallinn", "cc": [59, 25], "big": "Tallinn", "bc": [59, 25], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Eswatini", "f": "🇸🇿", "cap": "Mbabane (administrative), Lobamba (royale et législative)", "cc": [-26, 31], "big": "Manzini", "bc": [-26, 31], "cur": "lilangeni (SZL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "États-Unis", "f": "🇺🇸", "cap": "Washington", "cc": [39, -77], "big": "New York", "bc": [41, -74], "cur": "dollar américain (USD)", "note": "", "c": "Amérique du Nord"}, {"n": "Éthiopie", "f": "🇪🇹", "cap": "Addis-Abeba", "cc": [9, 39], "big": "Addis-Abeba", "bc": [9, 39], "cur": "birr (ETB)", "note": "Siège de l’Union africaine.", "c": "Afrique"}, {"n": "Fidji", "f": "🇫🇯", "cap": "Suva", "cc": [-18, 178], "big": "Suva", "bc": [-18, 178], "cur": "dollar fidjien (FJD)", "note": "", "c": "Océanie"}, {"n": "Finlande", "f": "🇫🇮", "cap": "Helsinki", "cc": [60, 25], "big": "Helsinki", "bc": [60, 25], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "France", "f": "🇫🇷", "cap": "Paris", "cc": [49, 2], "big": "Paris", "bc": [49, 2], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Gabon", "f": "🇬🇦", "cap": "Libreville", "cc": [0, 9], "big": "Libreville", "bc": [0, 9], "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Gambie", "f": "🇬🇲", "cap": "Banjul", "cc": [13, -17], "big": "Serekunda", "bc": [13, -17], "cur": "dalasi (GMD)", "note": "Serekunda dépasse largement Banjul en population.", "c": "Afrique"}, {"n": "Géorgie", "f": "🇬🇪", "cap": "Tbilissi", "cc": [42, 45], "big": "Tbilissi", "bc": [42, 45], "cur": "lari (GEL)", "note": "", "c": "Asie"}, {"n": "Ghana", "f": "🇬🇭", "cap": "Accra", "cc": [6, 0], "big": "Accra", "bc": [6, 0], "cur": "cedi (GHS)", "note": "", "c": "Afrique"}, {"n": "Grèce", "f": "🇬🇷", "cap": "Athènes", "cc": [38, 24], "big": "Athènes", "bc": [38, 24], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Grenade", "f": "🇬🇩", "cap": "Saint-Georges", "cc": [12, -62], "big": "Saint-Georges", "bc": [12, -62], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guatemala", "f": "🇬🇹", "cap": "Guatemala", "cc": [15, -91], "big": "Guatemala", "bc": [15, -91], "cur": "quetzal (GTQ)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Guinée", "f": "🇬🇳", "cap": "Conakry", "cc": [10, -14], "big": "Conakry", "bc": [10, -14], "cur": "franc guinéen (GNF)", "note": "", "c": "Afrique"}, {"n": "Guinée équatoriale", "f": "🇬🇶", "cap": "Malabo", "cc": [4, 9], "big": "Bata", "bc": [2, 10], "cur": "franc CFA (XAF)", "note": "Une nouvelle capitale, Ciudad de la Paz (Oyala), est en construction.", "c": "Afrique"}, {"n": "Guinée-Bissau", "f": "🇬🇼", "cap": "Bissau", "cc": [12, -16], "big": "Bissau", "bc": [12, -16], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Guyana", "f": "🇬🇾", "cap": "Georgetown", "cc": [7, -58], "big": "Georgetown", "bc": [7, -58], "cur": "dollar guyanien (GYD)", "note": "", "c": "Amérique du Sud"}, {"n": "Haïti", "f": "🇭🇹", "cap": "Port-au-Prince", "cc": [19, -72], "big": "Port-au-Prince", "bc": [19, -72], "cur": "gourde (HTG)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Honduras", "f": "🇭🇳", "cap": "Tegucigalpa", "cc": [14, -87], "big": "Tegucigalpa", "bc": [14, -87], "cur": "lempira (HNL)", "note": "San Pedro Sula est la capitale économique.", "c": "Amérique centrale et Caraïbes"}, {"n": "Hongrie", "f": "🇭🇺", "cap": "Budapest", "cc": [47, 19], "big": "Budapest", "bc": [47, 19], "cur": "forint (HUF)", "note": "", "c": "Europe"}, {"n": "Îles Marshall", "f": "🇲🇭", "cap": "Majuro", "cc": [7, 171], "big": "Majuro", "bc": [7, 171], "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Îles Salomon", "f": "🇸🇧", "cap": "Honiara", "cc": [-9, 160], "big": "Honiara", "bc": [-9, 160], "cur": "dollar des Salomon (SBD)", "note": "", "c": "Océanie"}, {"n": "Inde", "f": "🇮🇳", "cap": "New Delhi", "cc": [29, 77], "big": "Delhi", "bc": [29, 77], "cur": "roupie indienne (INR)", "note": "New Delhi est un district de l'agglomération de Delhi. Mumbai est la plus grande ville au sens municipal, Delhi la plus grande agglomération.", "c": "Asie"}, {"n": "Indonésie", "f": "🇮🇩", "cap": "Jakarta", "cc": [-6, 107], "big": "Jakarta", "bc": [-6, 107], "cur": "roupie indonésienne (IDR)", "note": "Nusantara doit devenir la capitale politique ; en 2026, Jakarta conserve le statut de capitale.", "c": "Asie"}, {"n": "Irak", "f": "🇮🇶", "cap": "Bagdad", "cc": [33, 44], "big": "Bagdad", "bc": [33, 44], "cur": "dinar irakien (IQD)", "note": "", "c": "Asie"}, {"n": "Iran", "f": "🇮🇷", "cap": "Téhéran", "cc": [36, 51], "big": "Téhéran", "bc": [36, 51], "cur": "rial iranien (IRR)", "note": "", "c": "Asie"}, {"n": "Irlande", "f": "🇮🇪", "cap": "Dublin", "cc": [53, -6], "big": "Dublin", "bc": [53, -6], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Islande", "f": "🇮🇸", "cap": "Reykjavik", "cc": [64, -22], "big": "Reykjavik", "bc": [64, -22], "cur": "couronne islandaise (ISK)", "note": "", "c": "Europe"}, {"n": "Israël", "f": "🇮🇱", "cap": "Jérusalem", "cc": [32, 35], "big": "Tel Aviv-Jaffa", "bc": [32, 35], "cur": "nouveau shekel (ILS)", "note": "Statut de Jérusalem contesté ; la plupart des ambassades sont à Tel Aviv. Jérusalem est la plus grande commune, l'agglomération de Tel Aviv (Gush Dan) la plus peuplée.", "c": "Asie"}, {"n": "Italie", "f": "🇮🇹", "cap": "Rome", "cc": [42, 13], "big": "Rome", "bc": [42, 13], "cur": "euro (EUR)", "note": "Selon la définition d'agglomération retenue, Milan peut dépasser Rome.", "c": "Europe"}, {"n": "Jamaïque", "f": "🇯🇲", "cap": "Kingston", "cc": [18, -77], "big": "Kingston", "bc": [18, -77], "cur": "dollar jamaïcain (JMD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Japon", "f": "🇯🇵", "cap": "Tokyo", "cc": [36, 140], "big": "Tokyo", "bc": [36, 140], "cur": "yen (JPY)", "note": "Plus grande agglomération du monde.", "c": "Asie"}, {"n": "Jordanie", "f": "🇯🇴", "cap": "Amman", "cc": [32, 36], "big": "Amman", "bc": [32, 36], "cur": "dinar jordanien (JOD)", "note": "", "c": "Asie"}, {"n": "Kazakhstan", "f": "🇰🇿", "cap": "Astana", "cc": [51, 71], "big": "Almaty", "bc": [43, 77], "cur": "tenge (KZT)", "note": "Capitale transférée d’Almaty à Astana en 1997.", "c": "Asie"}, {"n": "Kenya", "f": "🇰🇪", "cap": "Nairobi", "cc": [-1, 37], "big": "Nairobi", "bc": [-1, 37], "cur": "shilling kényan (KES)", "note": "", "c": "Afrique"}, {"n": "Kirghizistan", "f": "🇰🇬", "cap": "Bichkek", "cc": [43, 75], "big": "Bichkek", "bc": [43, 75], "cur": "som (KGS)", "note": "", "c": "Asie"}, {"n": "Kiribati", "f": "🇰🇮", "cap": "Tarawa-Sud", "cc": [1, 173], "big": "Tarawa-Sud", "bc": [1, 173], "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Koweït", "f": "🇰🇼", "cap": "Koweït", "cc": [29, 48], "big": "Koweït", "bc": [29, 48], "cur": "dinar koweïtien (KWD)", "note": "La monnaie ayant la plus forte valeur faciale du monde.", "c": "Asie"}, {"n": "Laos", "f": "🇱🇦", "cap": "Vientiane", "cc": [18, 103], "big": "Vientiane", "bc": [18, 103], "cur": "kip (LAK)", "note": "", "c": "Asie"}, {"n": "Lesotho", "f": "🇱🇸", "cap": "Maseru", "cc": [-29, 27], "big": "Maseru", "bc": [-29, 27], "cur": "loti (LSL)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Lettonie", "f": "🇱🇻", "cap": "Riga", "cc": [57, 24], "big": "Riga", "bc": [57, 24], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Liban", "f": "🇱🇧", "cap": "Beyrouth", "cc": [34, 36], "big": "Beyrouth", "bc": [34, 36], "cur": "livre libanaise (LBP)", "note": "", "c": "Asie"}, {"n": "Liberia", "f": "🇱🇷", "cap": "Monrovia", "cc": [6, -11], "big": "Monrovia", "bc": [6, -11], "cur": "dollar libérien (LRD)", "note": "", "c": "Afrique"}, {"n": "Libye", "f": "🇱🇾", "cap": "Tripoli", "cc": [33, 13], "big": "Tripoli", "bc": [33, 13], "cur": "dinar libyen (LYD)", "note": "", "c": "Afrique"}, {"n": "Liechtenstein", "f": "🇱🇮", "cap": "Vaduz", "cc": [47, 10], "big": "Schaan", "bc": [47, 10], "cur": "franc suisse (CHF)", "note": "", "c": "Europe"}, {"n": "Lituanie", "f": "🇱🇹", "cap": "Vilnius", "cc": [55, 25], "big": "Vilnius", "bc": [55, 25], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Luxembourg", "f": "🇱🇺", "cap": "Luxembourg", "cc": [50, 6], "big": "Luxembourg", "bc": [50, 6], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Macédoine du Nord", "f": "🇲🇰", "cap": "Skopje", "cc": [42, 21], "big": "Skopje", "bc": [42, 21], "cur": "denar (MKD)", "note": "", "c": "Europe"}, {"n": "Madagascar", "f": "🇲🇬", "cap": "Antananarivo", "cc": [-19, 48], "big": "Antananarivo", "bc": [-19, 48], "cur": "ariary (MGA)", "note": "", "c": "Afrique"}, {"n": "Malaisie", "f": "🇲🇾", "cap": "Kuala Lumpur", "cc": [3, 102], "big": "Kuala Lumpur", "bc": [3, 102], "cur": "ringgit (MYR)", "note": "Putrajaya est la capitale administrative.", "c": "Asie"}, {"n": "Malawi", "f": "🇲🇼", "cap": "Lilongwe", "cc": [-14, 34], "big": "Lilongwe", "bc": [-14, 34], "cur": "kwacha malawien (MWK)", "note": "Blantyre est la capitale économique.", "c": "Afrique"}, {"n": "Maldives", "f": "🇲🇻", "cap": "Malé", "cc": [4, 74], "big": "Malé", "bc": [4, 74], "cur": "rufiyaa (MVR)", "note": "", "c": "Asie"}, {"n": "Mali", "f": "🇲🇱", "cap": "Bamako", "cc": [13, -8], "big": "Bamako", "bc": [13, -8], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Malte", "f": "🇲🇹", "cap": "La Valette", "cc": [36, 15], "big": "La Valette", "bc": [36, 15], "cur": "euro (EUR)", "note": "La Valette ne compte que quelques milliers d’habitants ; Birkirkara est la plus grande commune.", "c": "Europe"}, {"n": "Maroc", "f": "🇲🇦", "cap": "Rabat", "cc": [34, -7], "big": "Casablanca", "bc": [34, -8], "cur": "dirham marocain (MAD)", "note": "", "c": "Afrique"}, {"n": "Maurice", "f": "🇲🇺", "cap": "Port-Louis", "cc": [-20, 57], "big": "Port-Louis", "bc": [-20, 57], "cur": "roupie mauricienne (MUR)", "note": "", "c": "Afrique"}, {"n": "Mauritanie", "f": "🇲🇷", "cap": "Nouakchott", "cc": [18, -16], "big": "Nouakchott", "bc": [18, -16], "cur": "ouguiya (MRU)", "note": "", "c": "Afrique"}, {"n": "Mexique", "f": "🇲🇽", "cap": "Mexico", "cc": [19, -99], "big": "Mexico", "bc": [19, -99], "cur": "peso mexicain (MXN)", "note": "", "c": "Amérique du Nord"}, {"n": "Micronésie", "f": "🇫🇲", "cap": "Palikir", "cc": [7, 158], "big": "Weno", "bc": [7, 152], "cur": "dollar américain (USD)", "note": "", "c": "Océanie"}, {"n": "Moldavie", "f": "🇲🇩", "cap": "Chisinau", "cc": [47, 29], "big": "Chisinau", "bc": [47, 29], "cur": "leu moldave (MDL)", "note": "", "c": "Europe"}, {"n": "Monaco", "f": "🇲🇨", "cap": "Monaco", "cc": [44, 7], "big": "Monaco", "bc": [44, 7], "cur": "euro (EUR)", "note": "Cité-État ; Monte-Carlo est un quartier, pas la capitale.", "c": "Europe"}, {"n": "Mongolie", "f": "🇲🇳", "cap": "Oulan-Bator", "cc": [48, 107], "big": "Oulan-Bator", "bc": [48, 107], "cur": "tugrik (MNT)", "note": "Capitale la plus froide du monde.", "c": "Asie"}, {"n": "Monténégro", "f": "🇲🇪", "cap": "Podgorica", "cc": [42, 19], "big": "Podgorica", "bc": [42, 19], "cur": "euro (EUR)", "note": "Le Monténégro utilise l'euro unilatéralement.", "c": "Europe"}, {"n": "Mozambique", "f": "🇲🇿", "cap": "Maputo", "cc": [-26, 33], "big": "Maputo", "bc": [-26, 33], "cur": "metical (MZN)", "note": "Matola, dans l’agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Namibie", "f": "🇳🇦", "cap": "Windhoek", "cc": [-23, 17], "big": "Windhoek", "bc": [-23, 17], "cur": "dollar namibien (NAD)", "note": "Le rand sud-africain circule à parité.", "c": "Afrique"}, {"n": "Nauru", "f": "🇳🇷", "cap": "Yaren (de facto)", "cc": [-1, 167], "big": "Yaren", "bc": [-1, 167], "cur": "dollar australien (AUD)", "note": "Nauru n’a pas de capitale officielle.", "c": "Océanie"}, {"n": "Népal", "f": "🇳🇵", "cap": "Katmandou", "cc": [28, 85], "big": "Katmandou", "bc": [28, 85], "cur": "roupie népalaise (NPR)", "note": "", "c": "Asie"}, {"n": "Nicaragua", "f": "🇳🇮", "cap": "Managua", "cc": [12, -86], "big": "Managua", "bc": [12, -86], "cur": "córdoba (NIO)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Niger", "f": "🇳🇪", "cap": "Niamey", "cc": [14, 2], "big": "Niamey", "bc": [14, 2], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Nigéria", "f": "🇳🇬", "cap": "Abuja", "cc": [9, 7], "big": "Lagos", "bc": [6, 3], "cur": "naira (NGN)", "note": "Capitale transférée de Lagos à Abuja en 1991.", "c": "Afrique"}, {"n": "Norvège", "f": "🇳🇴", "cap": "Oslo", "cc": [60, 11], "big": "Oslo", "bc": [60, 11], "cur": "couronne norvégienne (NOK)", "note": "", "c": "Europe"}, {"n": "Nouvelle-Zélande", "f": "🇳🇿", "cap": "Wellington", "cc": [-41, 175], "big": "Auckland", "bc": [-37, 175], "cur": "dollar néo-zélandais (NZD)", "note": "", "c": "Océanie"}, {"n": "Oman", "f": "🇴🇲", "cap": "Mascate", "cc": [24, 58], "big": "Mascate", "bc": [24, 58], "cur": "rial omanais (OMR)", "note": "", "c": "Asie"}, {"n": "Ouganda", "f": "🇺🇬", "cap": "Kampala", "cc": [0, 33], "big": "Kampala", "bc": [0, 33], "cur": "shilling ougandais (UGX)", "note": "", "c": "Afrique"}, {"n": "Ouzbékistan", "f": "🇺🇿", "cap": "Tachkent", "cc": [41, 69], "big": "Tachkent", "bc": [41, 69], "cur": "sum (UZS)", "note": "", "c": "Asie"}, {"n": "Pakistan", "f": "🇵🇰", "cap": "Islamabad", "cc": [34, 73], "big": "Karachi", "bc": [25, 67], "cur": "roupie pakistanaise (PKR)", "note": "Capitale transférée de Karachi à Islamabad en 1967.", "c": "Asie"}, {"n": "Palaos", "f": "🇵🇼", "cap": "Ngerulmud", "cc": [8, 135], "big": "Koror", "bc": [7, 134], "cur": "dollar américain (USD)", "note": "Ngerulmud est la plus petite capitale du monde par la population.", "c": "Océanie"}, {"n": "Palestine", "f": "🇵🇸", "cap": "Jérusalem-Est (revendiquée), Ramallah (siège de l’Autorité)", "cc": [32, 35], "big": "Gaza", "bc": [32, 34], "cur": "nouveau shekel (ILS), dinar jordanien (JOD)", "note": "Statut contesté ; plusieurs monnaies circulent.", "c": "Asie"}, {"n": "Panama", "f": "🇵🇦", "cap": "Panama", "cc": [9, -80], "big": "Panama", "bc": [9, -80], "cur": "balboa (PAB) et dollar américain (USD)", "note": "Le balboa est à parité avec le dollar ; seules des pièces sont émises.", "c": "Amérique centrale et Caraïbes"}, {"n": "Papouasie-Nouvelle-Guinée", "f": "🇵🇬", "cap": "Port Moresby", "cc": [-9, 147], "big": "Port Moresby", "bc": [-9, 147], "cur": "kina (PGK)", "note": "", "c": "Océanie"}, {"n": "Paraguay", "f": "🇵🇾", "cap": "Asuncion", "cc": [-25, -58], "big": "Asuncion", "bc": [-25, -58], "cur": "guarani (PYG)", "note": "", "c": "Amérique du Sud"}, {"n": "Pays-Bas", "f": "🇳🇱", "cap": "Amsterdam", "cc": [52, 5], "big": "Amsterdam", "bc": [52, 5], "cur": "euro (EUR)", "note": "La Haye est le siège du gouvernement.", "c": "Europe"}, {"n": "Pérou", "f": "🇵🇪", "cap": "Lima", "cc": [-12, -77], "big": "Lima", "bc": [-12, -77], "cur": "sol (PEN)", "note": "", "c": "Amérique du Sud"}, {"n": "Philippines", "f": "🇵🇭", "cap": "Manille", "cc": [15, 121], "big": "Manille", "bc": [15, 121], "cur": "peso philippin (PHP)", "note": "Quezon City est la plus grande commune ; l’agglomération de Manille est la plus peuplée.", "c": "Asie"}, {"n": "Pologne", "f": "🇵🇱", "cap": "Varsovie", "cc": [52, 21], "big": "Varsovie", "bc": [52, 21], "cur": "zloty (PLN)", "note": "", "c": "Europe"}, {"n": "Portugal", "f": "🇵🇹", "cap": "Lisbonne", "cc": [39, -9], "big": "Lisbonne", "bc": [39, -9], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Qatar", "f": "🇶🇦", "cap": "Doha", "cc": [25, 52], "big": "Doha", "bc": [25, 52], "cur": "riyal qatari (QAR)", "note": "", "c": "Asie"}, {"n": "République centrafricaine", "f": "🇨🇫", "cap": "Bangui", "cc": [4, 19], "big": "Bangui", "bc": [4, 19], "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "République démocratique du Congo", "f": "🇨🇩", "cap": "Kinshasa", "cc": [-4, 15], "big": "Kinshasa", "bc": [-4, 15], "cur": "franc congolais (CDF)", "note": "Kinshasa est la plus grande ville francophone du monde.", "c": "Afrique"}, {"n": "République dominicaine", "f": "🇩🇴", "cap": "Saint-Domingue", "cc": [18, -70], "big": "Saint-Domingue", "bc": [18, -70], "cur": "peso dominicain (DOP)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "République du Congo", "f": "🇨🇬", "cap": "Brazzaville", "cc": [-4, 15], "big": "Brazzaville", "bc": [-4, 15], "cur": "franc CFA (XAF)", "note": "Pointe-Noire est la capitale économique.", "c": "Afrique"}, {"n": "Roumanie", "f": "🇷🇴", "cap": "Bucarest", "cc": [44, 26], "big": "Bucarest", "bc": [44, 26], "cur": "leu roumain (RON)", "note": "", "c": "Europe"}, {"n": "Royaume-Uni", "f": "🇬🇧", "cap": "Londres", "cc": [52, 0], "big": "Londres", "bc": [52, 0], "cur": "livre sterling (GBP)", "note": "", "c": "Europe"}, {"n": "Russie", "f": "🇷🇺", "cap": "Moscou", "cc": [56, 38], "big": "Moscou", "bc": [56, 38], "cur": "rouble (RUB)", "note": "Plus grande ville d’Europe.", "c": "Europe"}, {"n": "Rwanda", "f": "🇷🇼", "cap": "Kigali", "cc": [-2, 30], "big": "Kigali", "bc": [-2, 30], "cur": "franc rwandais (RWF)", "note": "", "c": "Afrique"}, {"n": "Saint-Christophe-et-Niévès", "f": "🇰🇳", "cap": "Basseterre", "cc": [17, -63], "big": "Basseterre", "bc": [17, -63], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Saint-Marin", "f": "🇸🇲", "cap": "Saint-Marin", "cc": [44, 12], "big": "Dogana", "bc": [44, 12], "cur": "euro (EUR)", "note": "Dogana, dans la commune de Serravalle, est la plus grande localité.", "c": "Europe"}, {"n": "Saint-Vincent-et-les-Grenadines", "f": "🇻🇨", "cap": "Kingstown", "cc": [13, -61], "big": "Kingstown", "bc": [13, -61], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Sainte-Lucie", "f": "🇱🇨", "cap": "Castries", "cc": [14, -61], "big": "Castries", "bc": [14, -61], "cur": "dollar des Caraïbes orientales (XCD)", "note": "", "c": "Amérique centrale et Caraïbes"}, {"n": "Salvador", "f": "🇸🇻", "cap": "San Salvador", "cc": [14, -89], "big": "San Salvador", "bc": [14, -89], "cur": "dollar américain (USD)", "note": "Dollarisé depuis 2001.", "c": "Amérique centrale et Caraïbes"}, {"n": "Samoa", "f": "🇼🇸", "cap": "Apia", "cc": [-14, -172], "big": "Apia", "bc": [-14, -172], "cur": "tala (WST)", "note": "", "c": "Océanie"}, {"n": "São Tomé et Príncipe", "f": "🇸🇹", "cap": "São Tomé", "cc": [0, 7], "big": "São Tomé", "bc": [0, 7], "cur": "dobra (STN)", "note": "", "c": "Afrique"}, {"n": "Sénégal", "f": "🇸🇳", "cap": "Dakar", "cc": [15, -17], "big": "Dakar", "bc": [15, -17], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Serbie", "f": "🇷🇸", "cap": "Belgrade", "cc": [45, 20], "big": "Belgrade", "bc": [45, 20], "cur": "dinar serbe (RSD)", "note": "", "c": "Europe"}, {"n": "Seychelles", "f": "🇸🇨", "cap": "Victoria", "cc": [-5, 55], "big": "Victoria", "bc": [-5, 55], "cur": "roupie seychelloise (SCR)", "note": "", "c": "Afrique"}, {"n": "Sierra Leone", "f": "🇸🇱", "cap": "Freetown", "cc": [8, -13], "big": "Freetown", "bc": [8, -13], "cur": "leone (SLE)", "note": "Le leone a été redénominé en 2022 (mille anciens leones = un nouveau).", "c": "Afrique"}, {"n": "Singapour", "f": "🇸🇬", "cap": "Singapour", "cc": [1, 104], "big": "Singapour", "bc": [1, 104], "cur": "dollar de Singapour (SGD)", "note": "Cité-État.", "c": "Asie"}, {"n": "Slovaquie", "f": "🇸🇰", "cap": "Bratislava", "cc": [48, 17], "big": "Bratislava", "bc": [48, 17], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Slovénie", "f": "🇸🇮", "cap": "Ljubljana", "cc": [46, 15], "big": "Ljubljana", "bc": [46, 15], "cur": "euro (EUR)", "note": "", "c": "Europe"}, {"n": "Somalie", "f": "🇸🇴", "cap": "Mogadiscio", "cc": [2, 45], "big": "Mogadiscio", "bc": [2, 45], "cur": "shilling somalien (SOS)", "note": "", "c": "Afrique"}, {"n": "Soudan", "f": "🇸🇩", "cap": "Khartoum", "cc": [16, 33], "big": "Khartoum", "bc": [16, 33], "cur": "livre soudanaise (SDG)", "note": "Omdourman, dans la même agglomération, est la plus grande commune.", "c": "Afrique"}, {"n": "Soudan du Sud", "f": "🇸🇸", "cap": "Djouba", "cc": [5, 32], "big": "Djouba", "bc": [5, 32], "cur": "livre sud-soudanaise (SSP)", "note": "", "c": "Afrique"}, {"n": "Sri Lanka", "f": "🇱🇰", "cap": "Sri Jayawardenepura Kotte", "cc": [7, 80], "big": "Colombo", "bc": [7, 80], "cur": "roupie srilankaise (LKR)", "note": "Colombo est la capitale économique et la plus grande ville.", "c": "Asie"}, {"n": "Suède", "f": "🇸🇪", "cap": "Stockholm", "cc": [59, 18], "big": "Stockholm", "bc": [59, 18], "cur": "couronne suédoise (SEK)", "note": "", "c": "Europe"}, {"n": "Suisse", "f": "🇨🇭", "cap": "Berne", "cc": [47, 7], "big": "Zurich", "bc": [47, 9], "cur": "franc suisse (CHF)", "note": "Berne est officiellement « ville fédérale ».", "c": "Europe"}, {"n": "Suriname", "f": "🇸🇷", "cap": "Paramaribo", "cc": [6, -55], "big": "Paramaribo", "bc": [6, -55], "cur": "dollar surinamais (SRD)", "note": "", "c": "Amérique du Sud"}, {"n": "Syrie", "f": "🇸🇾", "cap": "Damas", "cc": [34, 36], "big": "Damas", "bc": [34, 36], "cur": "livre syrienne (SYP)", "note": "Alep, longtemps la plus grande ville, a été dépassée par Damas.", "c": "Asie"}, {"n": "Tadjikistan", "f": "🇹🇯", "cap": "Douchanbé", "cc": [39, 69], "big": "Douchanbé", "bc": [39, 69], "cur": "somoni (TJS)", "note": "", "c": "Asie"}, {"n": "Tanzanie", "f": "🇹🇿", "cap": "Dodoma", "cc": [-6, 36], "big": "Dar es Salaam", "bc": [-7, 39], "cur": "shilling tanzanien (TZS)", "note": "Capitale transférée de Dar es Salaam à Dodoma (officielle depuis 1996).", "c": "Afrique"}, {"n": "Tchad", "f": "🇹🇩", "cap": "N’Djaména", "cc": [12, 15], "big": "N’Djaména", "bc": [12, 15], "cur": "franc CFA (XAF)", "note": "", "c": "Afrique"}, {"n": "Tchéquie", "f": "🇨🇿", "cap": "Prague", "cc": [50, 14], "big": "Prague", "bc": [50, 14], "cur": "couronne tchèque (CZK)", "note": "", "c": "Europe"}, {"n": "Thaïlande", "f": "🇹🇭", "cap": "Bangkok", "cc": [14, 101], "big": "Bangkok", "bc": [14, 101], "cur": "baht (THB)", "note": "", "c": "Asie"}, {"n": "Timor oriental", "f": "🇹🇱", "cap": "Dili", "cc": [-9, 126], "big": "Dili", "bc": [-9, 126], "cur": "dollar américain (USD)", "note": "", "c": "Asie"}, {"n": "Togo", "f": "🇹🇬", "cap": "Lomé", "cc": [6, 1], "big": "Lomé", "bc": [6, 1], "cur": "franc CFA (XOF)", "note": "", "c": "Afrique"}, {"n": "Tonga", "f": "🇹🇴", "cap": "Nukuʻalofa", "cc": [-21, -175], "big": "Nukuʻalofa", "bc": [-21, -175], "cur": "pa’anga (TOP)", "note": "", "c": "Océanie"}, {"n": "Trinité-et-Tobago", "f": "🇹🇹", "cap": "Port-d’Espagne", "cc": [11, -62], "big": "Port-d’Espagne", "bc": [11, -62], "cur": "dollar de Trinité-et-Tobago (TTD)", "note": "Chaguanas est la plus grande commune.", "c": "Amérique centrale et Caraïbes"}, {"n": "Tunisie", "f": "🇹🇳", "cap": "Tunis", "cc": [37, 10], "big": "Tunis", "bc": [37, 10], "cur": "dinar tunisien (TND)", "note": "", "c": "Afrique"}, {"n": "Turkménistan", "f": "🇹🇲", "cap": "Achgabat", "cc": [38, 58], "big": "Achgabat", "bc": [38, 58], "cur": "manat turkmène (TMT)", "note": "", "c": "Asie"}, {"n": "Turquie", "f": "🇹🇷", "cap": "Ankara", "cc": [40, 33], "big": "Istanbul", "bc": [41, 29], "cur": "livre turque (TRY)", "note": "Capitale transférée d’Istanbul à Ankara en 1923.", "c": "Asie"}, {"n": "Tuvalu", "f": "🇹🇻", "cap": "Funafuti", "cc": [-9, 179], "big": "Funafuti", "bc": [-9, 179], "cur": "dollar australien (AUD)", "note": "", "c": "Océanie"}, {"n": "Ukraine", "f": "🇺🇦", "cap": "Kyiv", "cc": [50, 31], "big": "Kyiv", "bc": [50, 31], "cur": "hryvnia (UAH)", "note": "", "c": "Europe"}, {"n": "Uruguay", "f": "🇺🇾", "cap": "Montevideo", "cc": [-35, -56], "big": "Montevideo", "bc": [-35, -56], "cur": "peso uruguayen (UYU)", "note": "", "c": "Amérique du Sud"}, {"n": "Vanuatu", "f": "🇻🇺", "cap": "Port-Vila", "cc": [-18, 168], "big": "Port-Vila", "bc": [-18, 168], "cur": "vatu (VUV)", "note": "", "c": "Océanie"}, {"n": "Vatican", "f": "🇻🇦", "cap": "Cité du Vatican", "cc": [42, 12], "big": "Cité du Vatican", "bc": [42, 12], "cur": "euro (EUR)", "note": "État le moins peuplé du monde.", "c": "Europe"}, {"n": "Venezuela", "f": "🇻🇪", "cap": "Caracas", "cc": [10, -67], "big": "Caracas", "bc": [10, -67], "cur": "bolívar (VES)", "note": "", "c": "Amérique du Sud"}, {"n": "Viêt Nam", "f": "🇻🇳", "cap": "Hanoï", "cc": [21, 106], "big": "Hô Chi Minh-Ville", "bc": [11, 107], "cur": "dông (VND)", "note": "Hô Chi Minh-Ville s’appelait Saïgon.", "c": "Asie"}, {"n": "Yémen", "f": "🇾🇪", "cap": "Sanaa", "cc": [15, 44], "big": "Sanaa", "bc": [15, 44], "cur": "rial yéménite (YER)", "note": "", "c": "Asie"}, {"n": "Zambie", "f": "🇿🇲", "cap": "Lusaka", "cc": [-15, 28], "big": "Lusaka", "bc": [-15, 28], "cur": "kwacha zambien (ZMW)", "note": "", "c": "Afrique"}, {"n": "Zimbabwe", "f": "🇿🇼", "cap": "Harare", "cc": [-18, 31], "big": "Harare", "bc": [-18, 31], "cur": "ZiG – Zimbabwe Gold (ZWG) et dollar américain (USD)", "note": "Le ZiG, adossé à l’or, a remplacé le dollar zimbabwéen en 2024.", "c": "Afrique"}];
 const CONTS = ["Afrique","Amérique du Nord","Amérique centrale et Caraïbes","Amérique du Sud","Asie","Europe","Océanie"];
 const LAB = {cap:"Capitale", big:"Plus grande ville", cur:"Monnaie"};
 
@@ -543,13 +577,11 @@ async function ghSave(isRetry){
 }
 
 /* ---------- état ---------- */
-let mode = 1;                 // 1 fiche, 2 révélation, 3 quiz, 4 explorer
+let mode = 1;                 // 1 fiche, 2 révélation, 3 explorer
 let pool = 'tous';
 let sel = new Set(CONTS);
-let fields = new Set(['cap','big','cur']);
 let randLimit = 0;
-let list = [], idx = 0, shown = 0;
-let quizList = [], qi = 0, qgood = 0, qdone = 0, qcur = null;
+let list = [], idx = 0;
 let exCur = null;
 
 const $ = id => document.getElementById(id);
@@ -588,17 +620,12 @@ function setPool(p){
   document.querySelectorAll('#poolpanel .chip').forEach(b=>b.classList.toggle('on', b.dataset.p===p));
   updCount();
 }
-function toggleField(f){
-  if(fields.has(f)){ if(fields.size===1) return; fields.delete(f); } else fields.add(f);
-  document.querySelectorAll('#quizpanel .chip').forEach(b=>b.classList.toggle('on', fields.has(b.dataset.q)));
-}
 function setMode(m){
   mode = m;
-  [1,2,3,4].forEach(i=>$('mode'+i+'btn').classList.toggle('selected', i===m));
-  const explore = m===4;
+  [1,2,3].forEach(i=>$('mode'+i+'btn').classList.toggle('selected', i===m));
+  const explore = m===3;
   $('catpanel').style.display = explore? 'none':'flex';
   $('poolpanel').style.display = explore? 'none':'block';
-  $('quizpanel').style.display = m===3? 'block':'none';
   $('expanel').style.display = explore? 'block':'none';
   $('startBtn').style.display = explore? 'none':'inline-block';
   $('homefoot').textContent = explore? 'Recherche par pays, capitale, ville ou monnaie'
@@ -611,61 +638,114 @@ function startSession(){
   let l = shuffle(base().slice());
   if(randLimit) l = l.slice(0, randLimit);
   if(!l.length) return;
-  if(mode===3){ quizList = l; qi = 0; qgood = 0; qdone = 0; show('quiz'); quizAsk(); return; }
   list = l; idx = 0; show('play'); render();
 }
 function show(id){
-  ['home','play','quiz'].forEach(s=>$(s).classList.toggle('active', s===id));
+  ['home','play','recap'].forEach(s=>$(s).classList.toggle('active', s===id));
   document.body.classList.toggle('playing', id==='play');
   window.scrollTo(0,0);
 }
 function goHome(){ show('home'); buildCats(); updCount(); }
 function shuffleNow(){ shuffle(list); idx = 0; render(); }
 
-function factHTML(p,f,hidden){
-  return `<div class="fact ${hidden?'hidden':''}" data-f="${f}" onclick="revealOne('${f}',event)">
-            <span class="lab">${LAB[f]}</span>
-            <span class="val">${hidden? '• • •' : p[f]}</span>
+/* ---------- cellules d'une fiche ----------
+   Ordre de révélation : capitale, sa latitude, sa longitude, puis la plus grande
+   ville et ses coordonnées, puis la monnaie. */
+const CELLS = [
+  {f:'cap', k:'name'}, {f:'cap', k:'lat'}, {f:'cap', k:'lon'},
+  {f:'big', k:'name'}, {f:'big', k:'lat'}, {f:'big', k:'lon'},
+  {f:'cur', k:'name'}
+];
+const COORD = {cap:'cc', big:'bc'};
+/* Degrés entiers, convention française : N/S pour la latitude, E/O pour la longitude.
+   Le méridien ou l'équateur s'affichent « 0° », sans hémisphère. */
+function fmtLat(v){ return v===0? '0°' : Math.abs(v)+'° '+(v>0? 'N':'S'); }
+function fmtLon(v){ return v===0? '0°' : Math.abs(v)+'° '+(v>0? 'E':'O'); }
+function cellLabel(c){
+  if(c.k==='lat') return 'Lat.';
+  if(c.k==='lon') return 'Long.';
+  return LAB[c.f];
+}
+function cellValue(p,c){
+  if(c.k==='name') return p[c.f];
+  const co = p[COORD[c.f]];
+  return c.k==='lat'? fmtLat(co[0]) : fmtLon(co[1]);
+}
+/* longueur du mot le plus long : sert à réduire la police d'un nom insécable */
+function longestWord(s){ return Math.max.apply(null, s.split(/[\s\-’']/).map(w=>w.length)); }
+function cellHTML(p,c,i,hidden){
+  const cls = c.k==='name'
+    ? 'city' + (longestWord(p[c.f]) >= 10 ? ' tight' : '')
+    : 'coord';
+  return `<div class="fact ${cls} ${hidden?'hidden':''}" data-i="${i}" onclick="revealOne(${i},event)">
+            <span class="lab">${cellLabel(c)}</span>
+            <span class="val">${hidden? '•••' : cellValue(p,c)}</span>
           </div>`;
+}
+/* Trois cellules par ville sur une même rangée, la monnaie sur toute la largeur.
+   Au-delà de 26 caractères le nom de ville passe sur sa propre ligne. */
+function rowHTML(p, i0, hideFrom){
+  const cell = i => cellHTML(p, CELLS[i], i, hideFrom!==null && i>=hideFrom);
+  const long = p[CELLS[i0].f].length > 20;
+  return long
+    ? `<div class="frow long">${cell(i0)}<div class="csub">${cell(i0+1)}${cell(i0+2)}</div></div>`
+    : `<div class="frow">${cell(i0)}${cell(i0+1)}${cell(i0+2)}</div>`;
+}
+function factsHTML(p, hideFrom){
+  const cell = i => cellHTML(p, CELLS[i], i, hideFrom!==null && i>=hideFrom);
+  return rowHTML(p, 0, hideFrom) + rowHTML(p, 3, hideFrom) + cell(6);
 }
 function render(){
   const p = list[idx];
-  shown = mode===2? 0 : 3;
   $('counter').textContent = `${idx+1} / ${list.length}`;
-  const order = ['cap','big','cur'];
   $('playcard').innerHTML =
     `<div class="flag">${p.f}</div>
      <div class="word">${p.n}</div>
      <div class="diffrow">${segHTML(p.n)}</div>
-     <div class="meanings">${order.map((f,i)=>factHTML(p,f, mode===2 && i>=shown)).join('')}</div>
-     ${p.note? `<div class="note">${p.note}</div>`:''}`;
+     <div class="meanings">${factsHTML(p, mode===2? 0 : null)}</div>
+     ${p.note? `<div class="note" id="playnote"${mode===2? ' style="display:none"':''}>${p.note}</div>`:''}`;
   const b = $('revealBtn');
   b.style.display = mode===2? 'block':'none';
   b.disabled = false;
-  b.textContent = mode===2? '👁 Révéler' : '👁 Révéler';
+  b.textContent = '👁 Révéler';
+  $('prevBtn').disabled = idx===0;
+  $('prevBtn').style.opacity = idx===0? .4 : 1;
+  $('nextBtn').textContent = idx===list.length-1? 'Bilan ▶' : 'Suiv. ▶';
   paintSideBtns();
 }
-function revealOne(f, ev){
+function revealCell(el){
+  if(!el || !el.classList.contains('hidden')) return false;
+  const i = +el.dataset.i;
+  el.classList.remove('hidden');
+  el.querySelector('.val').textContent = cellValue(list[idx], CELLS[i]);
+  if(!document.querySelector('#playcard .fact.hidden')){
+    $('revealBtn').textContent = 'Suivant ▶';
+    const nt = $('playnote'); if(nt) nt.style.display = '';   // la remarque peut divulguer la réponse
+  }
+  return true;
+}
+function revealOne(i, ev){
   if(mode!==2) return;
-  const el = document.querySelector(`#playcard .fact[data-f="${f}"]`);
-  // case déjà visible : on laisse l'événement remonter pour avancer d'une fiche
+  const el = document.querySelector(`#playcard .fact[data-i="${i}"]`);
+  // cellule déjà visible : on laisse l'événement remonter pour avancer d'une fiche
   if(!el || !el.classList.contains('hidden')) return;
   if(ev) ev.stopPropagation();
-  el.classList.remove('hidden');
-  el.querySelector('.val').textContent = list[idx][f];
-  shown++;
-  if(shown>=3) $('revealBtn').textContent = 'Suivant ▶';
+  revealCell(el);
 }
-/* Révèle le fait suivant ; une fois tout révélé, passe au pays suivant.
-   Hors mode Révélation, avance simplement. */
+/* Révèle la cellule suivante dans l'ordre ; une fois tout révélé, passe au pays
+   suivant. Hors mode Révélation, avance simplement. */
 function revealOrNext(){
   if(mode!==2){ nav(1); return; }
   const next = document.querySelector('#playcard .fact.hidden');
-  if(next){ revealOne(next.dataset.f); return; }
+  if(next){ revealCell(next); return; }
   nav(1);
 }
+/* Plus de bouclage infini : la dernière fiche mène au bilan, la première ne recule pas. */
 function nav(d){
-  idx = (idx + d + list.length) % list.length;
+  const n = idx + d;
+  if(n >= list.length){ endCards(); return; }
+  if(n < 0) return;
+  idx = n;
   render();
 }
 function segHTML(n){
@@ -699,42 +779,43 @@ function refreshMarkUI(){
   if($('home').classList.contains('active')) updCount();
 }
 
-/* ---------- quiz ---------- */
-function quizAsk(){
-  if(qi >= quizList.length) qi = 0;
-  const p = quizList[qi];
-  const fs = [...fields];
-  const f = fs[Math.floor(Math.random()*fs.length)];
-  const pooled = DATA.filter(x => x[f] !== p[f]);
-  const opts = shuffle(pooled.slice()).filter((x,i,a)=>a.findIndex(y=>y[f]===x[f])===i).slice(0,3).map(x=>x[f]);
-  qcur = {p, f, answer: p[f], options: shuffle(opts.concat([p[f]]))};
-  const q = f==='cap'? `Quelle est la capitale de…` : f==='big'? `Quelle est la plus grande ville de…` : `Quelle est la monnaie de…`;
-  $('qcounter').textContent = `${qi+1} / ${quizList.length}`;
-  $('qscore').textContent = qdone? `${qgood} / ${qdone}` : '';
-  $('quizcard').innerHTML =
-    `<p class="qask">${q}</p>
-     <div class="flag">${p.f}</div>
-     <div class="word">${p.n}</div>
-     <div class="qopts">${qcur.options.map(o=>`<button class="qopt" onclick="answer(this)">${o}</button>`).join('')}</div>
-     <div class="note" id="qnote" style="display:none"></div>`;
+/* ---------- bilan de fin de session ---------- */
+let recapReplay = null;
+function pctBar(a,r,t){
+  const pa = t? Math.round(a/t*100) : 0, pr = t? Math.round(r/t*100) : 0;
+  return `<div class="pbar"><i class="pa" style="width:${pa}%"></i><i class="pr" style="width:${pr}%"></i></div>`;
 }
-function answer(btn){
-  const good = btn.textContent === qcur.answer;
-  document.querySelectorAll('#quizcard .qopt').forEach(b=>{
-    b.disabled = true;
-    if(b.textContent === qcur.answer) b.classList.add('good');
-    else if(b === btn) b.classList.add('bad');
-  });
-  qdone++; if(good) qgood++;
-  setMark(qcur.p.n, good? 'acquis':'revoir');
-  $('qscore').textContent = `${qgood} / ${qdone}`;
-  const p = qcur.p;
-  const rest = ['cap','big','cur'].filter(f=>f!==qcur.f).map(f=>`${LAB[f]} : ${p[f]}`).join(' · ');
-  const n = $('qnote');
-  n.style.display = 'block';
-  n.innerHTML = `${rest}${p.note? '<br>'+p.note : ''}`;
+function endCards(){
+  const a = list.filter(p=>markOf(p.n)==='acquis'), r = list.filter(p=>markOf(p.n)==='revoir');
+  const nd = list.length - a.length - r.length;
+  recapReplay = r.slice();
+  $('rcounter').textContent = `${list.length} fiche${list.length>1?'s':''}`;
+  $('recapcard').innerHTML =
+    `<div class="recaphead">
+       <div class="big">🏁</div>
+       <div class="sub">Série terminée — ${list.length} pays parcouru${list.length>1?'s':''}</div>
+     </div>
+     ${pctBar(a.length, r.length, list.length)}
+     <div class="recapstats">
+       <div class="rstat"><b>${a.length}</b><span>✅ acquis</span></div>
+       <div class="rstat"><b>${r.length}</b><span>🔥 à revoir</span></div>
+     </div>
+     ${nd? `<p class="note" style="border:0;margin:2px 0 0;padding:0;text-align:center">${nd} pays non classé${nd>1?'s':''}</p>`:''}
+     ${r.length? `<div class="recaplist"><h4>À revoir</h4>${r.map(p=>`<div class="ritem"><span class="rf">${p.f}</span>${p.n}</div>`).join('')}</div>`:''}`;
+  $('recapctrl').innerHTML =
+    (r.length? `<button class="ctrl reveal" onclick="replayRecap()">🔥 Revoir les ${r.length}</button>`:'')
+    + `<button class="ctrl next" onclick="restartRecap()">↻ Recommencer</button>`;
+  $('recapfoot').textContent = r.length? 'Entrée : revoir les pays marqués · Échap : menu'
+                                       : 'Entrée : recommencer · Échap : menu';
+  show('recap');
 }
-function quizNext(){ qi++; if(qi>=quizList.length){ qi = 0; shuffle(quizList); } quizAsk(); }
+function replayRecap(){
+  if(!recapReplay || !recapReplay.length) return restartRecap();
+  list = shuffle(recapReplay.slice()); idx = 0; show('play'); render();
+}
+function restartRecap(){
+  list = shuffle(list.slice()); idx = 0; show('play'); render();
+}
 
 /* ---------- explorer ---------- */
 function exSearch(){
@@ -756,13 +837,39 @@ function exShow(n){
     `<div class="flag">${p.f}</div>
      <div class="word">${p.n}</div>
      <div class="diffrow">${segHTML(p.n)}</div>
-     <div class="meanings">${['cap','big','cur'].map(f=>factHTML(p,f,false)).join('')}</div>
+     <div class="meanings">${factsHTML(p, null)}</div>
      ${p.note? `<div class="note">${p.note}</div>`:''}`;
+}
+
+/* ---------- progression ---------- */
+function toggleProgress(){
+  const p = $('progress');
+  const open = p.style.display === 'none';
+  if(open) buildProgress();
+  p.style.display = open ? 'flex' : 'none';
+}
+function buildProgress(){
+  const rows = CONTS.map(c=>{
+    const l = DATA.filter(p=>p.c===c);
+    const a = l.filter(p=>markOf(p.n)==='acquis').length;
+    const r = l.filter(p=>markOf(p.n)==='revoir').length;
+    return `<div class="progrow">
+              <div class="ptop"><b>${c}</b><span>${a} ✅ · ${r} 🔥 · ${l.length - a - r} · <b>${l.length}</b></span></div>
+              ${pctBar(a, r, l.length)}
+            </div>`;
+  }).join('');
+  const A = nbAcquis(), R = nbRevoir();
+  $('progbody').innerHTML = rows +
+    `<div class="progrow" style="margin-top:14px;border-top:1px solid rgba(255,255,255,.15);padding-top:12px">
+       <div class="ptop"><b>Total</b><span>${A} ✅ · ${R} 🔥 · ${DATA.length - A - R} · <b>${DATA.length}</b></span></div>
+       ${pctBar(A, R, DATA.length)}
+     </div>`;
 }
 
 /* ---------- révélation au clic sur l'écran ---------- */
 document.addEventListener('click', e=>{
   if(!document.body.classList.contains('playing')) return;
+  if($('syncsetup').style.display !== 'none' || $('progress').style.display !== 'none') return;
   // les commandes gardent leur propre comportement
   if(e.target.closest('button, input, a, select, textarea, .diffseg, .topbar, .controls, .sidebtn')) return;
   // une case masquée gère elle-même sa révélation : ne pas en dévoiler deux d'un coup
@@ -774,9 +881,25 @@ document.addEventListener('click', e=>{
 document.addEventListener('keydown', e=>{
   const t = e.target;
   if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
-  if($('syncsetup').style.display !== 'none') return;
-  if(!document.body.classList.contains('playing')) return;
+  if($('syncsetup').style.display !== 'none' || $('progress').style.display !== 'none'){
+    if(e.key === 'Escape'){
+      e.preventDefault();
+      if($('progress').style.display !== 'none') toggleProgress(); else toggleSyncSetup();
+    }
+    return;
+  }
   const k = e.key;
+
+  /* ---- écran de bilan ---- */
+  if($('recap').classList.contains('active')){
+    if(k === 'Escape'){ e.preventDefault(); goHome(); }
+    else if(k === 'Enter' || k === ' '){ e.preventDefault(); replayRecap(); }
+    else if(k === 'r' || k === 'R'){ e.preventDefault(); restartRecap(); }
+    return;
+  }
+
+  /* ---- fiches ---- */
+  if(!document.body.classList.contains('playing')) return;
   if(k === 'ArrowRight' || k === 'ArrowDown'){ e.preventDefault(); revealOrNext(); }
   else if(k === 'ArrowLeft' || k === 'ArrowUp'){ e.preventDefault(); nav(-1); }
   else if(k === ' ' || k === 'Enter'){ e.preventDefault(); revealOrNext(); }
